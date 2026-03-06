@@ -19,6 +19,8 @@ import SupportButton from "./components/SupportButton";
 import DownloadPopup from "./components/DownloadPopup";
 import PageLoader from "./components/PageLoader";
 import NotificationModal, { NotifType } from "./components/NotificationModal";
+import Cart from "./components/Cart";
+import OrderTracker from "./components/OrderTracker";
 
 /**
  * Mock data for Header
@@ -248,7 +250,7 @@ const mockUserStats: UserStats = {
   total_orders: 42
 };
 
-type AppView = 'home' | 'transactions' | 'addmoney' | 'orders' | 'profile' | 'game_detail' | 'auth' | 'checkout' | 'forgot_password' | 'reset_password' | 'payment_verify';
+type AppView = 'home' | 'transactions' | 'addmoney' | 'orders' | 'profile' | 'game_detail' | 'auth' | 'checkout' | 'forgot_password' | 'reset_password' | 'payment_verify' | 'cart' | 'order_tracker';
 
 const GameDetailRoute = ({ products, userBalance, isLoggedIn, onAuthRequired, onBack, onRefreshBalance, onPurchase }: any) => {
   const { id } = useParams();
@@ -377,10 +379,11 @@ export default function App() {
       <ScrollToTop />
       <PageLoader isLoading={isLoading} />
       
-      {(view === 'home' || view === 'game_detail' || view === 'orders' || view === 'profile' || view === 'auth' || view === 'addmoney' || view === 'transactions' || view === 'forgot_password' || view === 'reset_password') && (
+      {(view === 'home' || view === 'game_detail' || view === 'orders' || view === 'profile' || view === 'auth' || view === 'addmoney' || view === 'transactions' || view === 'forgot_password' || view === 'reset_password' || view === 'cart' || view === 'order_tracker') && (
         <Header 
           siteInfo={mockSiteInfo} 
           user={isLoggedIn ? mockUser : null} 
+          isSidebarOpen={isSidebarOpen}
           onToggleSidebar={handleToggleSidebar}
           onLogin={handleLogin}
           onRegister={handleRegister}
@@ -396,7 +399,6 @@ export default function App() {
         onLogout={handleLogout}
         onLogin={handleLogin}
         onNavigate={(v) => handleNavigate(v as AppView)}
-        supportLink="#"
       />
 
       <DownloadPopup 
@@ -421,7 +423,7 @@ export default function App() {
         onClose={() => setNotif({ ...notif, isOpen: false })}
       />
 
-      <main className="pb-20"> {/* Extra padding for bottom nav */}
+      <main>
         <Routes>
           <Route path="/" element={
             <>
@@ -486,7 +488,12 @@ export default function App() {
             <>
               <AddMoney 
                 videoLink="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
-                onProceed={(amount) => { setCheckoutAmount(amount); handleNavigate('checkout'); }}
+                onProceed={(amount, method) => { 
+                  setCheckoutAmount(amount); 
+                  setSelectedPaymentMethod(method);
+                  handleNavigate('checkout'); 
+                }}
+                onViewTransactions={() => handleNavigate('transactions')}
               />
               <Footer logo={mockSiteInfo.logo} siteName={mockSiteInfo.name} socialLinks={mockSocialLinks} />
             </>
@@ -550,6 +557,25 @@ export default function App() {
                 onSignup={handleAuthSuccess}
                 onForgotPassword={() => handleNavigate('forgot_password')}
                 initialIsLogin={location.state?.isLogin ?? true}
+              />
+              <Footer logo={mockSiteInfo.logo} siteName={mockSiteInfo.name} socialLinks={mockSocialLinks} />
+            </>
+          } />
+          
+          <Route path="/cart" element={
+            <>
+              <Cart 
+                onBack={() => handleNavigate('home')} 
+                onCheckout={() => handleNavigate('checkout')} 
+              />
+              <Footer logo={mockSiteInfo.logo} siteName={mockSiteInfo.name} socialLinks={mockSocialLinks} />
+            </>
+          } />
+          
+          <Route path="/order_tracker" element={
+            <>
+              <OrderTracker 
+                onBack={() => handleNavigate('home')} 
               />
               <Footer logo={mockSiteInfo.logo} siteName={mockSiteInfo.name} socialLinks={mockSocialLinks} />
             </>

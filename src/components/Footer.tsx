@@ -28,7 +28,7 @@ const Footer: React.FC<FooterProps> = ({
   developerLink = "https://t.me/DeveloperSketvia01"
 }) => {
   return (
-    <footer className="footer-section bg-[#f3f4f6] text-[#1f2937] pt-5 pb-6 border-t border-[#e5e7eb] relative z-[1] w-full font-['Noto_Serif_Bengali',_serif]">
+    <footer className="footer-section bg-[#f3f4f6] text-[#1f2937] pt-5 pb-[80px] border-t border-[#e5e7eb] relative z-[1] w-full font-['Noto_Serif_Bengali',_serif]">
       <div className="container mx-auto px-6">
         {/* Logo */}
         <div className="mb-5">

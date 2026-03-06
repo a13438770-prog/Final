@@ -1,4 +1,5 @@
 import React from "react";
+import { motion, AnimatePresence } from "motion/react";
 
 /**
  * Interface for Site Information
@@ -26,6 +27,7 @@ export interface User {
 interface HeaderProps {
   siteInfo: SiteInfo;
   user: User | null;
+  isSidebarOpen?: boolean;
   onToggleSidebar?: () => void;
   onLogin?: () => void;
   onRegister?: () => void;
@@ -59,10 +61,10 @@ const BalancePill: React.FC<{ balance: number, onClick?: () => void }> = ({ bala
 /**
  * Auth Buttons Component
  */
-const AuthButtons: React.FC<{ onLogin?: () => void; onRegister?: () => void }> = ({ onRegister }) => (
+const AuthButtons: React.FC<{ onLogin?: () => void; onRegister?: () => void }> = ({ onLogin }) => (
   <div className="flex items-center gap-2">
-    <button onClick={onRegister} className="btn-auth-register cursor-pointer">
-      Register
+    <button onClick={onLogin} className="btn-auth-login cursor-pointer font-bold">
+      Login
     </button>
   </div>
 );
@@ -70,7 +72,7 @@ const AuthButtons: React.FC<{ onLogin?: () => void; onRegister?: () => void }> =
 /**
  * Main Header Component
  */
-const Header: React.FC<HeaderProps> = ({ siteInfo, user, onToggleSidebar, onLogin, onRegister, onBalanceClick }) => {
+const Header: React.FC<HeaderProps> = ({ siteInfo, user, isSidebarOpen, onToggleSidebar, onLogin, onRegister, onBalanceClick, onLogoClick }) => {
   return (
     <header id="main-header-secure">
       <div className="container mx-auto px-2 flex justify-between items-center h-full gap-5">
@@ -93,15 +95,30 @@ const Header: React.FC<HeaderProps> = ({ siteInfo, user, onToggleSidebar, onLogi
 
               <button 
                 onClick={onToggleSidebar} 
-                className="w-10 h-10 rounded-full bg-gray-100 overflow-hidden relative focus:outline-none border border-gray-100 cursor-pointer" 
+                className="w-10 h-10 rounded-full overflow-hidden relative focus:outline-none cursor-pointer flex items-center justify-center" 
                 style={{ zIndex: 10001 }}
               >
-                <img 
-                  src={user.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=f3f4f6&color=333&length=1&font-size=0.5&bold=true`} 
-                  className="w-full h-full object-cover block"
-                  alt={user.name}
-                  referrerPolicy="no-referrer"
-                />
+                <AnimatePresence mode="wait">
+                  {isSidebarOpen ? (
+                    <motion.i 
+                      key="close"
+                      initial={{ opacity: 0, rotate: -90 }}
+                      animate={{ opacity: 1, rotate: 0 }}
+                      exit={{ opacity: 0, rotate: 90 }}
+                      transition={{ duration: 0.2 }}
+                      className="fa-solid fa-xmark text-xl text-gray-700 absolute"
+                    ></motion.i>
+                  ) : (
+                    <motion.i 
+                      key="menu"
+                      initial={{ opacity: 0, rotate: 90 }}
+                      animate={{ opacity: 1, rotate: 0 }}
+                      exit={{ opacity: 0, rotate: -90 }}
+                      transition={{ duration: 0.2 }}
+                      className="fa-solid fa-bars text-xl text-gray-700 absolute"
+                    ></motion.i>
+                  )}
+                </AnimatePresence>
               </button>
             </>
           ) : (

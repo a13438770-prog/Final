@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from "react";
 import { motion } from "motion/react";
-import { Search, Copy, CheckCircle, ExternalLink } from "lucide-react";
+import { Search, Copy, CheckCircle, ExternalLink, ArrowLeft, LayoutGrid } from "lucide-react";
 
 export interface OrderDetail {
   id: number;
@@ -75,23 +75,33 @@ const Orders: React.FC<OrdersProps> = ({ orders, onBack, onPayNow }) => {
   );
 
   return (
-    <div className="container mx-auto px-2 py-6 mb-20 max-w-lg">
-      <div className="flex items-center gap-3 mb-6">
-        <button onClick={onBack} className="w-10 h-10 bg-white rounded-full shadow flex items-center justify-center text-gray-600 hover:bg-gray-50">
-          <i className="fa-solid fa-arrow-left"></i>
-        </button>
-        <h1 className="text-2xl font-bold text-gray-900 font-bree">Order History</h1>
-      </div>
+    <div className="min-h-screen bg-[#f0f5f9] pb-20 pt-4">
+      <div className="container mx-auto px-2 max-w-lg">
+        {/* Header Card */}
+        <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-200 mb-3 flex items-center gap-3">
+          <button onClick={onBack} className="w-10 h-10 bg-red-50 rounded-full flex items-center justify-center text-red-600 hover:bg-red-100 transition-colors border border-red-100 flex-shrink-0">
+            <ArrowLeft className="w-5 h-5" />
+          </button>
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center flex-shrink-0 border border-red-100">
+              <LayoutGrid className="w-6 h-6 text-red-600" />
+            </div>
+            <div>
+              <h1 className="text-gray-900 font-bold text-xl leading-tight font-bree">Order Tracker</h1>
+              <p className="text-xs text-gray-500 mt-0.5">Track your past purchases</p>
+            </div>
+          </div>
+        </div>
 
       {/* Search Bar */}
-      <div className="relative mb-4">
+      <div className="relative mb-3">
         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
           <Search className="h-5 w-5 text-gray-400" />
         </div>
         <input
           type="text"
           placeholder="Search by Order ID, Game, Package, or UID..."
-          className="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all font-bree"
+          className="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all font-bree text-sm"
           value={searchQuery}
           onChange={(e) => {
             setSearchQuery(e.target.value);
@@ -101,7 +111,7 @@ const Orders: React.FC<OrdersProps> = ({ orders, onBack, onPayNow }) => {
       </div>
 
       {/* Filter Tabs */}
-      <div className="flex overflow-x-auto hide-scrollbar gap-2 mb-6 pb-2">
+      <div className="flex overflow-x-auto hide-scrollbar gap-2 mb-4 pb-1">
         {TABS.map(tab => (
           <button
             key={tab}
@@ -109,10 +119,10 @@ const Orders: React.FC<OrdersProps> = ({ orders, onBack, onPayNow }) => {
               setActiveTab(tab);
               setCurrentPage(1);
             }}
-            className={`whitespace-nowrap px-4 py-2 rounded-full text-sm font-medium transition-all ${
+            className={`whitespace-nowrap px-4 py-2 rounded-lg text-sm font-bold transition-all ${
               activeTab === tab 
                 ? 'bg-red-600 text-white shadow-md' 
-                : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'
+                : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50 shadow-sm'
             }`}
           >
             {tab}
@@ -128,13 +138,18 @@ const Orders: React.FC<OrdersProps> = ({ orders, onBack, onPayNow }) => {
               key={order.id}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-white rounded-xl p-3 shadow-sm border border-gray-100"
+              className="bg-white rounded-xl p-3.5 shadow-sm border border-gray-200"
             >
               {/* Header: Order ID & Status */}
-              <div className="flex justify-between items-center mb-2 pb-2 border-b border-gray-100">
-                <div className="font-bold text-gray-900 text-sm">
-                  <span className="text-gray-500 text-xs font-normal mr-1">Order ID:</span>
-                  #{order.id}
+              <div className="flex justify-between items-center mb-3 pb-2 border-b border-gray-100">
+                <div className="font-bold text-gray-900 text-sm flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center border border-gray-100">
+                    <i className="fa-solid fa-box text-gray-400 text-xs"></i>
+                  </div>
+                  <div>
+                    <span className="text-gray-500 text-[10px] font-normal block uppercase tracking-wider">Order ID</span>
+                    #{order.id}
+                  </div>
                 </div>
                 <div className={`px-2 py-0.5 rounded text-[10px] font-bold border uppercase tracking-wider ${getStatusClass(order.status)}`}>
                   {order.status}
@@ -201,9 +216,9 @@ const Orders: React.FC<OrdersProps> = ({ orders, onBack, onPayNow }) => {
                     <i className="fa-solid fa-ticket text-red-500"></i> Redeem Codes
                   </div>
                   
-                  <div className="space-y-1.5 mb-2">
+                  <div className="bg-gray-50 rounded-md border border-gray-200 mb-2 divide-y divide-gray-200">
                     {order.codes.map((code, idx) => (
-                      <div key={idx} className="flex items-center justify-between bg-gray-50 p-2 rounded-md border border-gray-200">
+                      <div key={idx} className="flex items-center justify-between p-2">
                         <code className="text-xs font-mono font-bold text-gray-800 tracking-wider">{code}</code>
                         <button 
                           onClick={() => handleCopy(code)}
@@ -250,11 +265,11 @@ const Orders: React.FC<OrdersProps> = ({ orders, onBack, onPayNow }) => {
             </motion.div>
           ))
         ) : (
-          <div className="bg-white rounded-2xl p-10 text-center shadow-sm border border-gray-100">
-            <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
-              <i className="fa-solid fa-box-open text-gray-300 text-3xl"></i>
+          <div className="bg-white p-8 text-center rounded-xl border border-gray-200 shadow-sm">
+            <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-3 border border-gray-100">
+              <i className="fa-solid fa-box-open text-2xl text-gray-300"></i>
             </div>
-            <h3 className="text-lg font-bold text-gray-900 mb-1">No Orders Found</h3>
+            <h3 className="text-gray-900 font-bold mb-1">No Orders Found</h3>
             <p className="text-gray-500 text-sm">
               {searchQuery ? "Try adjusting your search or filters." : "You haven't placed any orders yet."}
             </p>
@@ -264,40 +279,27 @@ const Orders: React.FC<OrdersProps> = ({ orders, onBack, onPayNow }) => {
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex justify-center items-center gap-2 mt-8">
+        <div className="flex justify-center items-center gap-2 mt-4">
           <button 
             onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
             disabled={currentPage === 1}
-            className="w-10 h-10 rounded-full flex items-center justify-center border border-gray-200 bg-white text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors"
+            className="w-8 h-8 flex items-center justify-center rounded-lg bg-white border border-gray-200 text-gray-600 disabled:opacity-50 shadow-sm"
           >
-            <i className="fa-solid fa-chevron-left text-sm"></i>
+            <i className="fa-solid fa-chevron-left text-xs"></i>
           </button>
-          
-          <div className="flex gap-1">
-            {Array.from({ length: totalPages }).map((_, i) => (
-              <button
-                key={i}
-                onClick={() => setCurrentPage(i + 1)}
-                className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-colors ${
-                  currentPage === i + 1 
-                    ? 'bg-red-600 text-white shadow-md' 
-                    : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'
-                }`}
-              >
-                {i + 1}
-              </button>
-            ))}
-          </div>
-
+          <span className="text-sm font-bold text-gray-700 bg-white px-3 py-1 rounded-lg border border-gray-200 shadow-sm">
+            {currentPage} / {totalPages}
+          </span>
           <button 
             onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
             disabled={currentPage === totalPages}
-            className="w-10 h-10 rounded-full flex items-center justify-center border border-gray-200 bg-white text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors"
+            className="w-8 h-8 flex items-center justify-center rounded-lg bg-white border border-gray-200 text-gray-600 disabled:opacity-50 shadow-sm"
           >
-            <i className="fa-solid fa-chevron-right text-sm"></i>
+            <i className="fa-solid fa-chevron-right text-xs"></i>
           </button>
         </div>
       )}
+      </div>
     </div>
   );
 };

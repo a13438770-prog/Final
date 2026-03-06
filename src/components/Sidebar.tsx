@@ -1,6 +1,6 @@
 import React from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { Home, User as UserIcon, ShoppingBag, QrCode, History, Wallet, LifeBuoy, LogOut } from "lucide-react";
+import { User as UserIcon, ShoppingBag, ShoppingCart, History, MapPin, LogOut } from "lucide-react";
 
 /**
  * Interface for User Information
@@ -15,7 +15,6 @@ interface SidebarProps {
   isOpen: boolean;
   onClose: () => void;
   user: User | null;
-  supportLink?: string;
   onLogout?: () => void;
   onLogin?: () => void;
   onNavigate?: (view: 'home' | 'transactions' | 'addmoney' | 'orders' | 'profile') => void;
@@ -54,7 +53,6 @@ const Sidebar: React.FC<SidebarProps> = ({
   isOpen, 
   onClose, 
   user, 
-  supportLink = "#", 
   onLogout, 
   onLogin,
   onNavigate
@@ -76,7 +74,7 @@ const Sidebar: React.FC<SidebarProps> = ({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/50 z-[99998]"
+            className="fixed top-[56px] bottom-0 left-0 right-0 bg-black/50 z-[10000]"
           />
         )}
       </AnimatePresence>
@@ -86,7 +84,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         initial={{ x: "100%" }}
         animate={{ x: isOpen ? 0 : "100%" }}
         transition={{ type: "spring", stiffness: 300, damping: 30 }}
-        className="fixed inset-y-0 right-0 w-[280px] bg-white z-[99999] flex flex-col border-l border-gray-200 shadow-2xl"
+        className="fixed top-[56px] bottom-0 right-0 w-[220px] bg-white z-[10001] flex flex-col border-l border-gray-200 shadow-2xl"
       >
         {/* User Profile Section */}
         <div className="p-6 border-b border-gray-100 flex items-center gap-4 bg-white">
@@ -107,13 +105,63 @@ const Sidebar: React.FC<SidebarProps> = ({
           </div>
         </div>
 
+        {/* Navigation Section */}
+        <nav className="px-2 py-4 space-y-1 flex-1 overflow-y-auto">
+          <SidebarItem 
+            href="#" 
+            label="Profile" 
+            onClick={() => handleNav('profile')}
+            icon={<UserIcon className="w-5 h-5" />}
+          />
+
+          <SidebarItem 
+            href="#" 
+            label="Cart" 
+            onClick={() => {
+              onNavigate?.('cart' as any);
+              onClose();
+            }}
+            icon={
+              <div className="relative">
+                <ShoppingCart className="w-5 h-5" />
+                <span className="absolute -top-1.5 -right-1.5 bg-red-600 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
+                  3
+                </span>
+              </div>
+            }
+          />
+
+          <SidebarItem 
+            href="#" 
+            label="Orders" 
+            onClick={() => handleNav('orders')}
+            icon={<ShoppingBag className="w-5 h-5" />}
+          />
+
+          <SidebarItem 
+            href="#" 
+            label="Transactions" 
+            onClick={() => handleNav('transactions')}
+            icon={<History className="w-5 h-5" />}
+          />
+
+          <SidebarItem 
+            href="#" 
+            label="Order Tracker" 
+            onClick={() => {
+              onNavigate?.('order_tracker' as any);
+              onClose();
+            }}
+            icon={<MapPin className="w-5 h-5" />}
+          />
+        </nav>
+        
         {/* Auth Action Section */}
-        <div className="px-4 pb-4 pt-4">
+        <div className="p-4 border-t border-gray-100 mt-auto pb-24">
           {user ? (
             <button 
               onClick={onLogout}
-              style={{ backgroundColor: "var(--primary-color)" }} 
-              className="hover:opacity-90 text-white text-sm font-medium w-full py-2.5 rounded-lg flex items-center justify-center gap-2 transition-opacity shadow-sm cursor-pointer"
+              className="bg-red-50 hover:bg-red-100 text-red-600 text-sm font-bold w-full py-3 rounded-lg flex items-center justify-center gap-2 transition-colors shadow-sm cursor-pointer"
             >
               <LogOut className="w-4 h-4" />
               Logout
@@ -122,63 +170,11 @@ const Sidebar: React.FC<SidebarProps> = ({
             <button 
               onClick={onLogin}
               style={{ backgroundColor: "var(--primary-color)" }} 
-              className="hover:opacity-90 text-white text-sm font-medium w-full py-2.5 rounded-lg block text-center transition-opacity shadow-sm cursor-pointer"
+              className="hover:opacity-90 text-white text-sm font-bold w-full py-3 rounded-lg block text-center transition-opacity shadow-sm cursor-pointer"
             >
               Login
             </button>
           )}
-        </div>
-
-        {/* Navigation Section */}
-        <nav className="px-2 py-2 space-y-1 flex-1 overflow-y-auto">
-          <SidebarItem 
-            href="#" 
-            label="Home" 
-            onClick={() => handleNav('home')}
-            icon={<Home className="w-5 h-5" />}
-          />
-
-          <SidebarItem 
-            href="#" 
-            label="My Account" 
-            onClick={() => handleNav('profile')}
-            icon={<UserIcon className="w-5 h-5" />}
-          />
-
-          <SidebarItem 
-            href="#" 
-            label="My Orders" 
-            onClick={() => handleNav('orders')}
-            icon={<ShoppingBag className="w-5 h-5" />}
-          />
-
-          <SidebarItem 
-            href="#" 
-            label="My Transactions" 
-            onClick={() => handleNav('transactions')}
-            icon={<History className="w-5 h-5" />}
-          />
-
-          <SidebarItem 
-            href="#" 
-            label="Add Money" 
-            onClick={() => handleNav('addmoney')}
-            icon={<Wallet className="w-5 h-5" />}
-          />
-        </nav>
-        
-        {/* Support Section */}
-        <div className="p-6 border-t border-gray-100 mt-auto">
-          <a 
-            href={supportLink} 
-            target="_blank" 
-            rel="noopener noreferrer"
-            style={{ backgroundColor: "var(--primary-color)" }} 
-            className="hover:opacity-90 text-white w-full py-3 rounded-lg flex items-center justify-center gap-3 font-medium transition-opacity shadow-sm"
-          >
-            <LifeBuoy className="w-5 h-5" />
-            Support
-          </a>
         </div>
       </motion.div>
     </>

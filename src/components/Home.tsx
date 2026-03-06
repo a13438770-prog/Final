@@ -113,10 +113,12 @@ const Notice: React.FC<{ text: string; onDismiss?: () => void }> = ({ text, onDi
   if (!isVisible) return null;
 
   return (
-    <div className="container mx-auto px-2 mt-4">
-      <div className="notice-box">
+    <div className="container mx-auto px-2 mt-2">
+      <div className="notice-box rounded-md">
         <div className="notice-header">
-          <span className="notice-title">Notice</span>
+          <span className="notice-title flex items-center gap-2">
+            <i className="fa-solid fa-bell"></i> Notice
+          </span>
           <i 
             className="fa-solid fa-xmark notice-close" 
             onClick={() => {
@@ -140,6 +142,9 @@ const Slider: React.FC<{ slides: Slide[] }> = ({ slides }) => {
   const [currentIdx, setCurrentIdx] = useState(0);
   const total = slides.length;
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+  
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
 
   const nextSlide = () => {
     setCurrentIdx((prev) => (prev + 1) % total);
@@ -168,6 +173,31 @@ const Slider: React.FC<{ slides: Slide[] }> = ({ slides }) => {
     resetTimer();
   };
 
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > 50;
+    const isRightSwipe = distance < -50;
+
+    if (isLeftSwipe) {
+      setCurrentIdx((prev) => (prev + 1) % total);
+      resetTimer();
+    }
+    if (isRightSwipe) {
+      setCurrentIdx((prev) => (prev - 1 + total) % total);
+      resetTimer();
+    }
+  };
+
   if (total === 0) {
     return (
       <div className="w-full px-2">
@@ -181,21 +211,12 @@ const Slider: React.FC<{ slides: Slide[] }> = ({ slides }) => {
   return (
     <div className="w-full px-2">
       <div className="relative w-full shadow-sm bg-gray-100 slider-aspect group overflow-hidden rounded-xl">
-        <motion.div 
-          className="flex h-full w-full"
-          animate={{ x: `-${currentIdx * 100}%` }}
-          transition={{ type: "spring", stiffness: 300, damping: 30 }}
-          drag="x"
-          dragConstraints={{ left: 0, right: 0 }}
-          onDragEnd={(_, info) => {
-            if (info.offset.x < -50) {
-              setCurrentIdx((prev) => (prev + 1) % total);
-              resetTimer();
-            } else if (info.offset.x > 50) {
-              setCurrentIdx((prev) => (prev - 1 + total) % total);
-              resetTimer();
-            }
-          }}
+        <div 
+          className="flex h-full w-full transition-transform duration-300 ease-out"
+          style={{ transform: `translateX(-${currentIdx * 100}%)` }}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
         >
           {slides.map((slide) => (
             <a 
@@ -218,20 +239,20 @@ const Slider: React.FC<{ slides: Slide[] }> = ({ slides }) => {
               />
             </a>
           ))}
-        </motion.div>
+        </div>
 
         {/* Navigation Buttons */}
         {total > 1 && (
-          <>
+          <div className="absolute bottom-2 right-2 flex gap-1 z-10">
             <button 
               onClick={(e) => {
                 e.preventDefault();
                 setCurrentIdx((prev) => (prev - 1 + total) % total);
                 resetTimer();
               }}
-              className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white w-8 h-8 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10"
+              className="bg-black/40 hover:bg-black/60 text-white w-7 h-7 rounded-full flex items-center justify-center backdrop-blur-sm"
             >
-              <i className="fa-solid fa-chevron-left"></i>
+              <i className="fa-solid fa-chevron-left text-xs"></i>
             </button>
             <button 
               onClick={(e) => {
@@ -239,16 +260,16 @@ const Slider: React.FC<{ slides: Slide[] }> = ({ slides }) => {
                 setCurrentIdx((prev) => (prev + 1) % total);
                 resetTimer();
               }}
-              className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white w-8 h-8 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10"
+              className="bg-black/40 hover:bg-black/60 text-white w-7 h-7 rounded-full flex items-center justify-center backdrop-blur-sm"
             >
-              <i className="fa-solid fa-chevron-right"></i>
+              <i className="fa-solid fa-chevron-right text-xs"></i>
             </button>
-          </>
+          </div>
         )}
       </div>
 
       {total > 1 && (
-        <div className="flex justify-center gap-2 mt-3 mb-6">
+        <div className="flex justify-center gap-2 mt-2 mb-4">
           {slides.map((_, i) => (
             <button 
               key={i}
