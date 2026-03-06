@@ -6,7 +6,6 @@ import Transactions, { Transaction } from "./components/Transactions";
 import GameDetail, { Product } from "./components/GameDetail";
 import Orders, { OrderDetail } from "./components/Orders";
 import Profile, { UserStats } from "./components/Profile";
-import Codes, { Voucher } from "./components/Codes";
 import Auth from "./components/Auth";
 import ForgotPassword from "./components/ForgotPassword";
 import ResetPassword from "./components/ResetPassword";
@@ -188,7 +187,8 @@ const mockOrderDetails: OrderDetail[] = [
     player_id: "123456789",
     amount: 85.00,
     status: 'completed',
-    payment_method: 'wallet'
+    payment_method: 'wallet',
+    quantity: 1
   },
   {
     id: 1025,
@@ -198,7 +198,9 @@ const mockOrderDetails: OrderDetail[] = [
     player_id: "987654321",
     amount: 95.00,
     status: 'processing',
-    payment_method: 'online'
+    payment_method: 'online',
+    payment_number: '01712345678',
+    quantity: 2
   },
   {
     id: 1026,
@@ -208,7 +210,34 @@ const mockOrderDetails: OrderDetail[] = [
     player_id: "555666777",
     amount: 45.00,
     status: 'pending',
-    payment_method: 'online'
+    payment_method: 'online',
+    payment_number: '01812345678',
+    quantity: 1
+  },
+  {
+    id: 1027,
+    created_at: "2024-03-04T12:00:00Z",
+    game_name: "Garena Shells",
+    product_name: "100 Shells",
+    amount: 150.00,
+    status: 'completed',
+    payment_method: 'wallet',
+    quantity: 1,
+    is_voucher: true,
+    codes: ["G-1234-5678-9012"]
+  },
+  {
+    id: 1028,
+    created_at: "2024-03-03T14:30:00Z",
+    game_name: "Razer Gold",
+    product_name: "$5 Pin",
+    amount: 550.00,
+    status: 'completed',
+    payment_method: 'online',
+    payment_number: '01912345678',
+    quantity: 2,
+    is_voucher: true,
+    codes: ["R-9876-5432-1098", "R-1111-2222-3333"]
   }
 ];
 
@@ -219,30 +248,7 @@ const mockUserStats: UserStats = {
   total_orders: 42
 };
 
-const mockVouchers: Voucher[] = [
-  {
-    id: 1,
-    code: "G-1234-5678-9012",
-    game_name: "Garena Shells",
-    product_name: "100 Shells",
-    game_image: "https://picsum.photos/seed/garena/200/200",
-    order_id: 1027,
-    amount: 150.00,
-    created_at: "2024-03-04T12:00:00Z"
-  },
-  {
-    id: 2,
-    code: "R-9876-5432-1098",
-    game_name: "Razer Gold",
-    product_name: "$5 Pin",
-    game_image: "https://picsum.photos/seed/razer/200/200",
-    order_id: 1028,
-    amount: 550.00,
-    created_at: "2024-03-03T14:30:00Z"
-  }
-];
-
-type AppView = 'home' | 'transactions' | 'addmoney' | 'orders' | 'codes' | 'profile' | 'game_detail' | 'auth' | 'checkout' | 'forgot_password' | 'reset_password' | 'payment_verify';
+type AppView = 'home' | 'transactions' | 'addmoney' | 'orders' | 'profile' | 'game_detail' | 'auth' | 'checkout' | 'forgot_password' | 'reset_password' | 'payment_verify';
 
 const GameDetailRoute = ({ products, userBalance, isLoggedIn, onAuthRequired, onBack, onRefreshBalance, onPurchase }: any) => {
   const { id } = useParams();
@@ -314,7 +320,7 @@ export default function App() {
     }
     
     // Auth Check
-    const protectedViews: AppView[] = ['transactions', 'orders', 'codes', 'profile', 'addmoney'];
+    const protectedViews: AppView[] = ['transactions', 'orders', 'profile', 'addmoney'];
     if (protectedViews.includes(newView) && !isLoggedIn) {
       navigate('/auth');
       return;
@@ -371,7 +377,7 @@ export default function App() {
       <ScrollToTop />
       <PageLoader isLoading={isLoading} />
       
-      {(view === 'home' || view === 'game_detail' || view === 'orders' || view === 'profile' || view === 'codes' || view === 'auth' || view === 'addmoney' || view === 'transactions' || view === 'forgot_password' || view === 'reset_password') && (
+      {(view === 'home' || view === 'game_detail' || view === 'orders' || view === 'profile' || view === 'auth' || view === 'addmoney' || view === 'transactions' || view === 'forgot_password' || view === 'reset_password') && (
         <Header 
           siteInfo={mockSiteInfo} 
           user={isLoggedIn ? mockUser : null} 
@@ -472,13 +478,6 @@ export default function App() {
                 stats={mockUserStats}
                 onRefresh={() => { setIsLoading(true); setTimeout(() => setIsLoading(false), 500); }}
               />
-              <Footer logo={mockSiteInfo.logo} siteName={mockSiteInfo.name} socialLinks={mockSocialLinks} />
-            </>
-          } />
-          
-          <Route path="/codes" element={
-            <>
-              <Codes vouchers={mockVouchers} onBuyNow={() => handleNavigate('home')} />
               <Footer logo={mockSiteInfo.logo} siteName={mockSiteInfo.name} socialLinks={mockSocialLinks} />
             </>
           } />

@@ -18,7 +18,7 @@ interface SidebarProps {
   supportLink?: string;
   onLogout?: () => void;
   onLogin?: () => void;
-  onNavigate?: (view: 'home' | 'transactions' | 'addmoney' | 'orders' | 'codes' | 'profile') => void;
+  onNavigate?: (view: 'home' | 'transactions' | 'addmoney' | 'orders' | 'profile') => void;
 }
 
 /**
@@ -61,7 +61,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 }) => {
   const avatarUrl = user?.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || "Guest")}&background=random&color=fff`;
 
-  const handleNav = (view: 'home' | 'transactions' | 'addmoney' | 'orders' | 'codes' | 'profile') => {
+  const handleNav = (view: 'home' | 'transactions' | 'addmoney' | 'orders' | 'profile') => {
     onNavigate?.(view);
     onClose();
   };
@@ -150,13 +150,6 @@ const Sidebar: React.FC<SidebarProps> = ({
             label="My Orders" 
             onClick={() => handleNav('orders')}
             icon={<ShoppingBag className="w-5 h-5" />}
-          />
-
-          <SidebarItem 
-            href="#" 
-            label="My Codes" 
-            onClick={() => handleNav('codes')}
-            icon={<QrCode className="w-5 h-5" />}
           />
 
           <SidebarItem 
