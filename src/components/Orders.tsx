@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from "react";
 import { motion } from "motion/react";
-import { Search, Copy, CheckCircle, ExternalLink, ArrowLeft, LayoutGrid } from "lucide-react";
+import { Search, Copy, CheckCircle, ExternalLink, ArrowLeft, ShoppingBag } from "lucide-react";
 
 export interface OrderDetail {
   id: number;
@@ -84,10 +84,10 @@ const Orders: React.FC<OrdersProps> = ({ orders, onBack, onPayNow }) => {
           </button>
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center flex-shrink-0 border border-red-100">
-              <LayoutGrid className="w-6 h-6 text-red-600" />
+              <ShoppingBag className="w-6 h-6 text-red-600" />
             </div>
             <div>
-              <h1 className="text-gray-900 font-bold text-xl leading-tight font-bree">Order Tracker</h1>
+              <h1 className="text-gray-900 font-bold text-xl leading-tight font-bree">Orders</h1>
               <p className="text-xs text-gray-500 mt-0.5">Track your past purchases</p>
             </div>
           </div>

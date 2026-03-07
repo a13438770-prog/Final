@@ -1,7 +1,7 @@
 import React, { useState, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { User as UserType } from "./Header";
-import { User, Wallet, ShoppingBag, CreditCard, Shield, Calendar, Clock, LayoutGrid, CheckCircle, Camera, Lock, Save, X, LogOut } from "lucide-react";
+import { User, Wallet, ShoppingBag, CreditCard, Shield, Calendar, Clock, LayoutGrid, CheckCircle, Camera, Lock, Save, X, LogOut, MapPin } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 export interface UserStats {
@@ -401,7 +401,20 @@ const Profile: React.FC<ProfileProps> = ({ user, stats, onRefresh }) => {
             >
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center border border-gray-200 group-hover:border-red-200 shadow-sm">
-                  <LayoutGrid className="w-4 h-4 text-gray-600 group-hover:text-red-600 transition-colors" />
+                  <ShoppingBag className="w-4 h-4 text-gray-600 group-hover:text-red-600 transition-colors" />
+                </div>
+                <span className="font-bold text-gray-900 text-sm group-hover:text-red-700 transition-colors">Orders</span>
+              </div>
+              <i className="fa-solid fa-chevron-right text-gray-400 text-xs group-hover:text-red-500 transition-colors"></i>
+            </button>
+
+            <button 
+              onClick={() => navigate('/order_tracker')} 
+              className="w-full bg-gray-50 p-3 rounded-lg border border-gray-100 flex items-center justify-between hover:bg-red-50 hover:border-red-100 transition-colors group"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center border border-gray-200 group-hover:border-red-200 shadow-sm">
+                  <MapPin className="w-4 h-4 text-gray-600 group-hover:text-red-600 transition-colors" />
                 </div>
                 <span className="font-bold text-gray-900 text-sm group-hover:text-red-700 transition-colors">Order Tracker</span>
               </div>

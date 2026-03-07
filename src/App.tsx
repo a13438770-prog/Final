@@ -136,11 +136,11 @@ const mockProducts: Product[] = [
 ];
 
 const mockLatestOrders: Order[] = [
-  { id: 1, user_name: "Rahat", user_image: "https://picsum.photos/seed/user1/40/40", product_name: "Free Fire 100 Diamonds", amount: 85.00, created_at: "2 mins ago" },
-  { id: 2, user_name: "Sabbir", user_image: "https://picsum.photos/seed/user2/40/40", product_name: "PUBG 60 UC", amount: 95.00, created_at: "5 mins ago" },
-  { id: 3, user_name: "Mitu", user_image: "https://picsum.photos/seed/user3/40/40", product_name: "Weekly Membership", amount: 160.00, created_at: "10 mins ago" },
-  { id: 4, user_name: "Tanvir", user_image: "https://picsum.photos/seed/user4/40/40", product_name: "MLBB 50 Diamonds", amount: 45.00, created_at: "15 mins ago" },
-  { id: 5, user_name: "Nabil", user_image: "https://picsum.photos/seed/user5/40/40", product_name: "Genshin Welkin", amount: 450.00, created_at: "20 mins ago" },
+  { id: 1, user_name: "Super Admin", product_name: "115 Diamond", amount: 76.00, created_at: "03 Mar, 2026 10:27", status: "Processing" },
+  { id: 2, user_name: "Super Admin", product_name: "115 Diamond", amount: 76.00, created_at: "03 Mar, 2026 10:26", status: "Processing" },
+  { id: 3, user_name: "Super Admin", product_name: "115 Diamond Code", amount: 78.00, created_at: "03 Mar, 2026 10:23", status: "Completed" },
+  { id: 4, user_name: "Super Admin", product_name: "115 Diamond Code", amount: 78.00, created_at: "03 Mar, 2026 10:23", status: "Completed" },
+  { id: 5, user_name: "Super Admin", product_name: "115 Diamond Code", amount: 78.00, created_at: "03 Mar, 2026 10:23", status: "Completed" },
 ];
 
 const mockPopup: PopupData = {

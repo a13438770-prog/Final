@@ -36,6 +36,7 @@ export interface Order {
   product_name: string;
   amount: number;
   created_at?: string;
+  status?: 'Processing' | 'Completed';
 }
 
 export interface PopupData {
@@ -389,36 +390,48 @@ const LatestOrders: React.FC<{ orders: Order[] }> = ({ orders }) => {
         <h2 className="latest-orders-title">Latest Orders</h2>
         <p className="latest-orders-subtitle">সবচেয়ে সাম্প্রতিক <span>5টি অর্ডার</span> এক নজরে</p>
         
-        {orders.length > 0 ? (
-          orders.map((order) => (
-            <div key={order.id} className="order-card">
-              <div className="order-user-info">
-                <img 
-                  src={order.user_image || "https://picsum.photos/seed/user/40/40"} 
-                  alt="User" 
-                  className="order-user-img"
-                  referrerPolicy="no-referrer"
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).src = "https://picsum.photos/seed/user/40/40";
-                  }}
-                />
-                
-                <div className="order-text-group">
-                  <div className="flex justify-between items-center w-full">
-                    <h4 className="order-user-name">{order.user_name || 'Guest'}</h4>
-                    {order.created_at && <span className="text-[10px] text-gray-400 font-medium">{order.created_at}</span>}
+        <div className="flex flex-col gap-3 mt-4">
+          {orders.length > 0 ? (
+            orders.map((order) => {
+              const initial = order.user_name ? order.user_name.charAt(0).toUpperCase() : 'G';
+              const status = order.status || (order.id % 2 === 0 ? 'Processing' : 'Completed');
+              
+              return (
+                <div key={order.id} className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-4 flex-1 min-w-0">
+                    <div className="w-[50px] h-[50px] rounded-full bg-[#e5e7eb] flex items-center justify-center text-gray-800 font-normal text-2xl flex-shrink-0 shadow-sm">
+                      {initial}
+                    </div>
+                    
+                    <div className="flex flex-col flex-1 min-w-0">
+                      <h4 className="font-bold text-gray-900 text-[17px] font-bree">{order.user_name || 'Guest'}</h4>
+                      <p className="text-[14px] text-gray-600 mt-0.5 leading-snug">
+                        {order.product_name} — <span className="font-bold text-gray-900">{order.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}৳</span>
+                      </p>
+                    </div>
                   </div>
-                  <p className="order-details">
-                    {order.product_name} • ৳{order.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                  </p>
+                  
+                  <div className="flex flex-col items-end gap-2 text-right flex-shrink-0">
+                    <span className={`px-4 py-1.5 rounded-full text-[12px] font-bold ${
+                      status === 'Processing' 
+                        ? 'bg-[#eab308] text-black' 
+                        : 'bg-[#22c55e] text-white'
+                    }`}>
+                      {status}
+                    </span>
+                    {order.created_at && (
+                      <span className="text-[12px] text-gray-500 font-medium max-w-[90px] leading-tight">
+                        {order.created_at}
+                      </span>
+                    )}
+                  </div>
                 </div>
-              </div>
-              <div className="order-status">completed</div>
-            </div>
-          ))
-        ) : (
-          <p className="text-gray-500 text-sm py-4">No recent orders found.</p>
-        )}
+              );
+            })
+          ) : (
+            <p className="text-gray-500 text-sm py-4 text-center">No recent orders found.</p>
+          )}
+        </div>
       </div>
     </div>
   );
