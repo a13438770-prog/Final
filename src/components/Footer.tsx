@@ -56,6 +56,15 @@ const Footer: React.FC<FooterProps> = ({
           </a>
 
           <a 
+            href={socialLinks.telegram || "#"} 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="bg-white rounded-full w-10 h-10 flex items-center justify-center text-black text-xl shadow-sm border border-white active:scale-[0.98] active:bg-[#f9fafb] transition-all"
+          >
+            <i className="fa-brands fa-telegram"></i>
+          </a>
+
+          <a 
             href={socialLinks.youtube || "#"} 
             target="_blank" 
             rel="noopener noreferrer"

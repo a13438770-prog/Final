@@ -660,7 +660,7 @@ body {
 }
 
 .popup-img-box { width: 100%; background: #000; }
-.popup-img-box img { display: block; width: 100%; height: auto; }
+.popup-img-box img { display: block; width: 100%; height: auto; max-height: 250px; object-fit: cover; }
 
 .popup-body { padding: 20px 20px 0px 20px; text-align: center; }
 

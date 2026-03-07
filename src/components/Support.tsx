@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Search, ChevronDown, Copy, CheckCircle, Mail, AlertTriangle, Send, PlayCircle, ExternalLink } from 'lucide-react';
+import { Search, ChevronDown, Copy, CheckCircle, Mail, AlertTriangle, Send, PlayCircle, ExternalLink, HelpCircle } from 'lucide-react';
 
 interface SupportProps {
   onBack: () => void;
@@ -121,17 +121,14 @@ const Support: React.FC<SupportProps> = ({ onBack, socialLinks }) => {
 
   return (
     <div className="container mx-auto px-2 py-4 pb-24 max-w-2xl">
-      {/* Header */}
-      <div className="flex items-center gap-3 mb-6">
-        <button 
-          onClick={onBack}
-          className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors"
-        >
-          <i className="fa-solid fa-arrow-left"></i>
-        </button>
+      {/* Header Card */}
+      <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-200 mb-6 flex items-center gap-3">
+        <div className="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center flex-shrink-0 border border-red-100">
+          <HelpCircle className="w-6 h-6 text-red-600" />
+        </div>
         <div>
-          <h1 className="text-xl font-bold text-gray-900 font-bree">Support Center</h1>
-          <p className="text-xs text-gray-500">Find help, guides, or contact our support team.</p>
+          <h1 className="text-gray-900 font-bold text-xl leading-tight font-bree">Support Center</h1>
+          <p className="text-xs text-gray-500 mt-0.5">Find help, guides, or contact our support team.</p>
         </div>
       </div>
 
@@ -173,7 +170,7 @@ const Support: React.FC<SupportProps> = ({ onBack, socialLinks }) => {
                       exit={{ height: 0, opacity: 0 }}
                       transition={{ duration: 0.2 }}
                     >
-                      <div className="p-4 pt-0 text-sm text-gray-600 border-t border-gray-100 mt-2">
+                      <div className="p-4 pt-0 text-sm text-gray-600 border-t border-gray-100 mt-2 font-['Noto_Serif_Bengali',_serif]">
                         {faq.answer}
                       </div>
                     </motion.div>
@@ -215,23 +212,22 @@ const Support: React.FC<SupportProps> = ({ onBack, socialLinks }) => {
 
       {/* Contact Support & Community */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-        {/* Direct Contact */}
+        {/* Contact Support */}
         <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
           <h3 className="text-base font-bold text-gray-900 mb-4 font-bree flex items-center gap-2">
-            <Mail className="w-4 h-4 text-red-500" /> Direct Contact
+            <Mail className="w-4 h-4 text-red-500" /> Contact Support
           </h3>
-          <div className="space-y-3">
+          <div className="space-y-4">
             <div>
               <p className="text-xs text-gray-500 mb-1">Support Email</p>
-              <div className="flex items-center justify-between bg-gray-50 p-2.5 rounded-lg border border-gray-200">
-                <span className="text-sm font-medium text-gray-800 truncate">{supportEmail}</span>
-                <button 
-                  onClick={handleCopyEmail}
-                  className="w-7 h-7 flex items-center justify-center rounded bg-white border border-gray-200 text-gray-500 hover:text-red-600 transition-colors shrink-0 ml-2"
-                  title="Copy Email"
-                >
-                  {copiedEmail ? <CheckCircle className="w-3.5 h-3.5 text-green-500" /> : <Copy className="w-3.5 h-3.5" />}
-                </button>
+              <div className="bg-gray-50 p-2.5 rounded-lg border border-gray-200">
+                <span className="text-sm font-medium text-gray-800 block select-all">support@riyalgames.online</span>
+              </div>
+            </div>
+            <div>
+              <p className="text-xs text-gray-500 mb-1">Business Email</p>
+              <div className="bg-gray-50 p-2.5 rounded-lg border border-gray-200">
+                <span className="text-sm font-medium text-gray-800 block select-all">support@riyalgames.online</span>
               </div>
             </div>
           </div>
@@ -240,41 +236,40 @@ const Support: React.FC<SupportProps> = ({ onBack, socialLinks }) => {
         {/* Community Support */}
         <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
           <h3 className="text-base font-bold text-gray-900 mb-4 font-bree flex items-center gap-2">
-            <i className="fa-solid fa-users text-blue-500"></i> Community Support
+            <i className="fa-solid fa-users text-blue-500"></i> Community & Social Links
           </h3>
           <div className="grid grid-cols-2 gap-2.5">
-            {socialLinks.telegram && (
-              <a href={socialLinks.telegram} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 p-2 rounded-lg border border-gray-100 hover:bg-[#0088cc]/10 hover:border-[#0088cc]/30 transition-colors group">
-                <div className="w-6 h-6 rounded-full bg-[#0088cc]/10 flex items-center justify-center text-[#0088cc] group-hover:bg-[#0088cc] group-hover:text-white transition-colors">
-                  <i className="fa-brands fa-telegram text-xs"></i>
-                </div>
-                <span className="text-xs font-bold text-gray-700">Telegram</span>
-              </a>
-            )}
-            {socialLinks.whatsapp && (
-              <a href={`https://wa.me/${socialLinks.whatsapp}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 p-2 rounded-lg border border-gray-100 hover:bg-[#25D366]/10 hover:border-[#25D366]/30 transition-colors group">
-                <div className="w-6 h-6 rounded-full bg-[#25D366]/10 flex items-center justify-center text-[#25D366] group-hover:bg-[#25D366] group-hover:text-white transition-colors">
-                  <i className="fa-brands fa-whatsapp text-xs"></i>
-                </div>
-                <span className="text-xs font-bold text-gray-700">WhatsApp</span>
-              </a>
-            )}
-            {socialLinks.facebook && (
-              <a href={socialLinks.facebook} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 p-2 rounded-lg border border-gray-100 hover:bg-[#1877F2]/10 hover:border-[#1877F2]/30 transition-colors group">
-                <div className="w-6 h-6 rounded-full bg-[#1877F2]/10 flex items-center justify-center text-[#1877F2] group-hover:bg-[#1877F2] group-hover:text-white transition-colors">
-                  <i className="fa-brands fa-facebook-f text-xs"></i>
-                </div>
-                <span className="text-xs font-bold text-gray-700">Facebook</span>
-              </a>
-            )}
-            {socialLinks.youtube && (
-              <a href={socialLinks.youtube} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 p-2 rounded-lg border border-gray-100 hover:bg-[#FF0000]/10 hover:border-[#FF0000]/30 transition-colors group">
-                <div className="w-6 h-6 rounded-full bg-[#FF0000]/10 flex items-center justify-center text-[#FF0000] group-hover:bg-[#FF0000] group-hover:text-white transition-colors">
-                  <i className="fa-brands fa-youtube text-xs"></i>
-                </div>
-                <span className="text-xs font-bold text-gray-700">YouTube</span>
-              </a>
-            )}
+            {/* Telegram Channel */}
+            <a href={socialLinks.telegram || "#"} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 p-2 rounded-lg border border-gray-100 hover:bg-[#0088cc]/10 hover:border-[#0088cc]/30 transition-colors group">
+              <div className="w-6 h-6 rounded-full bg-[#0088cc]/10 flex items-center justify-center text-[#0088cc] group-hover:bg-[#0088cc] group-hover:text-white transition-colors">
+                <i className="fa-brands fa-telegram text-xs"></i>
+              </div>
+              <span className="text-xs font-bold text-gray-700">Telegram Channel</span>
+            </a>
+
+            {/* WhatsApp Support */}
+            <a href={`https://wa.me/${socialLinks.whatsapp || socialLinks.helpline || ""}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 p-2 rounded-lg border border-gray-100 hover:bg-[#25D366]/10 hover:border-[#25D366]/30 transition-colors group">
+              <div className="w-6 h-6 rounded-full bg-[#25D366]/10 flex items-center justify-center text-[#25D366] group-hover:bg-[#25D366] group-hover:text-white transition-colors">
+                <i className="fa-brands fa-whatsapp text-xs"></i>
+              </div>
+              <span className="text-xs font-bold text-gray-700">WhatsApp Support</span>
+            </a>
+
+            {/* Facebook Page */}
+            <a href={socialLinks.facebook || "#"} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 p-2 rounded-lg border border-gray-100 hover:bg-[#1877F2]/10 hover:border-[#1877F2]/30 transition-colors group">
+              <div className="w-6 h-6 rounded-full bg-[#1877F2]/10 flex items-center justify-center text-[#1877F2] group-hover:bg-[#1877F2] group-hover:text-white transition-colors">
+                <i className="fa-brands fa-facebook-f text-xs"></i>
+              </div>
+              <span className="text-xs font-bold text-gray-700">Facebook Page</span>
+            </a>
+
+            {/* YouTube Channel */}
+            <a href={socialLinks.youtube || "#"} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 p-2 rounded-lg border border-gray-100 hover:bg-[#FF0000]/10 hover:border-[#FF0000]/30 transition-colors group">
+              <div className="w-6 h-6 rounded-full bg-[#FF0000]/10 flex items-center justify-center text-[#FF0000] group-hover:bg-[#FF0000] group-hover:text-white transition-colors">
+                <i className="fa-brands fa-youtube text-xs"></i>
+              </div>
+              <span className="text-xs font-bold text-gray-700">YouTube Channel</span>
+            </a>
           </div>
         </div>
       </div>
@@ -324,21 +319,40 @@ const Support: React.FC<SupportProps> = ({ onBack, socialLinks }) => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
+              <div className="relative">
                 <label className="block text-xs font-bold text-gray-700 mb-1.5">Problem Category *</label>
-                <select 
-                  name="category"
-                  value={formData.category}
-                  onChange={handleFormChange}
-                  className={`w-full px-3 py-2.5 bg-gray-50 border ${formErrors.category ? 'border-red-500' : 'border-gray-200'} rounded-lg text-sm focus:outline-none focus:border-red-500 focus:bg-white transition-colors appearance-none`}
-                >
-                  <option value="">Select a category</option>
-                  <option value="Payment Issue">Payment Issue</option>
-                  <option value="Order Issue">Order Issue</option>
-                  <option value="Account Problem">Account Problem</option>
-                  <option value="Technical Problem">Technical Problem</option>
-                  <option value="Other">Other</option>
-                </select>
+                <div className="relative">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const dropdown = document.getElementById('category-dropdown');
+                      if (dropdown) dropdown.classList.toggle('hidden');
+                    }}
+                    className={`w-full px-3 py-2.5 bg-gray-50 border ${formErrors.category ? 'border-red-500' : 'border-gray-200'} rounded-lg text-sm focus:outline-none focus:border-red-500 focus:bg-white transition-colors flex items-center justify-between text-left`}
+                  >
+                    <span className={formData.category ? 'text-gray-900' : 'text-gray-400'}>
+                      {formData.category || "Select a category"}
+                    </span>
+                    <ChevronDown className="w-4 h-4 text-gray-500" />
+                  </button>
+                  
+                  <div id="category-dropdown" className="hidden absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-10 max-h-60 overflow-y-auto">
+                    {["Payment Issue", "Order Issue", "Account Problem", "Technical Problem", "Other"].map((cat) => (
+                      <button
+                        key={cat}
+                        type="button"
+                        onClick={() => {
+                          setFormData(prev => ({ ...prev, category: cat }));
+                          if (formErrors.category) setFormErrors(prev => ({ ...prev, category: '' }));
+                          document.getElementById('category-dropdown')?.classList.add('hidden');
+                        }}
+                        className="w-full px-4 py-2 text-left text-sm hover:bg-red-50 hover:text-red-600 transition-colors border-b border-gray-50 last:border-0"
+                      >
+                        {cat}
+                      </button>
+                    ))}
+                  </div>
+                </div>
                 {formErrors.category && <p className="text-[10px] text-red-500 mt-1">{formErrors.category}</p>}
               </div>
               <div>

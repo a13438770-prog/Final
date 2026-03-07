@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { Home, Wallet, ShoppingBag, QrCode, User as UserIcon } from "lucide-react";
+import { Home, Wallet, ShoppingBag, QrCode, User as UserIcon, HelpCircle } from "lucide-react";
 import { User } from "./Header";
 
 interface BottomNavProps {
-  activeView: 'home' | 'transactions' | 'addmoney' | 'orders' | 'profile' | 'auth';
+  activeView: 'home' | 'transactions' | 'addmoney' | 'orders' | 'profile' | 'auth' | 'support';
   onNavigate: (view: any) => void;
   user: User | null;
 }
@@ -44,6 +44,11 @@ const BottomNav: React.FC<BottomNavProps> = ({ activeView, onNavigate, user }) =
       id: 'orders',
       label: 'Orders',
       icon: <ShoppingBag className="w-6 h-6" />
+    },
+    {
+      id: 'support',
+      label: 'Support',
+      icon: <HelpCircle className="w-6 h-6" />
     },
     {
       id: 'profile',

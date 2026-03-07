@@ -37,7 +37,7 @@ const DownloadPopup: React.FC<DownloadPopupProps> = ({ siteName, logo, downloadL
           initial={{ y: 50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 50, opacity: 0 }}
-          className="fixed bottom-[calc(85px+env(safe-area-inset-bottom))] left-2.5 right-2.5 z-[10000] bg-[#dc2626] text-white rounded-xl p-2.5 flex items-center gap-3 shadow-2xl md:left-0 md:right-0 md:mx-auto md:max-w-[480px] md:bottom-[110px]"
+          className="fixed bottom-[calc(80px+env(safe-area-inset-bottom))] left-2.5 right-2.5 z-[10000] bg-[#dc2626] text-white rounded-xl p-2.5 flex items-center gap-3 shadow-2xl md:left-0 md:right-0 md:mx-auto md:max-w-[480px] md:bottom-[100px]"
         >
           <div className="w-10 h-10 bg-white rounded-lg p-1 shrink-0">
             <img src={logo} className="w-full h-full object-contain" alt="Logo" referrerPolicy="no-referrer" />

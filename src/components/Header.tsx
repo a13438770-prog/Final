@@ -63,7 +63,7 @@ const BalancePill: React.FC<{ balance: number, onClick?: () => void }> = ({ bala
  */
 const AuthButtons: React.FC<{ onLogin?: () => void; onRegister?: () => void }> = ({ onLogin }) => (
   <div className="flex items-center gap-2">
-    <button onClick={onLogin} className="btn-auth-login cursor-pointer font-bold">
+    <button onClick={onLogin} className="btn-auth-login cursor-pointer font-extrabold">
       Login
     </button>
   </div>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 /**
  * Types for the Home component data
@@ -71,36 +72,47 @@ const Popup: React.FC<{ data: PopupData }> = ({ data }) => {
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.9, opacity: 0 }}
-        className="popup-wrapper"
+        className="popup-wrapper relative"
       >
-        <div className="popup-card">
+        <div className="popup-card relative overflow-hidden">
+          {/* Close Button (X) */}
+          <button 
+            onClick={() => setIsOpen(false)}
+            className="absolute top-2 right-2 z-10 w-8 h-8 bg-black/50 hover:bg-black/70 text-white rounded-full flex items-center justify-center transition-colors backdrop-blur-sm"
+          >
+            <i className="fa-solid fa-xmark"></i>
+          </button>
+
           {data.image && (
-            <div className="popup-img-box">
-              <img src={data.image} alt="Offer" referrerPolicy="no-referrer" />
+            <div className="popup-img-box w-full aspect-video">
+              <img src={data.image} alt="Offer" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
             </div>
           )}
 
-          <div className="popup-body">
+          <div className="popup-body pb-6">
             {data.text && (
               <div className="popup-text-content whitespace-pre-wrap">
                 {data.text}
               </div>
             )}
-
-            {data.btnText && (
-              <a href={data.link || "#"} className="popup-action-btn">
-                {data.btnText}
-              </a>
-            )}
           </div>
         </div>
 
-        <button 
-          className="popup-bottom-close" 
-          onClick={() => setIsOpen(false)}
-        >
-          <i className="fa-solid fa-xmark"></i> CLOSE
-        </button>
+        {/* Bottom CTA Button (Replaces old Close button) */}
+        {data.btnText && (
+          <a 
+            href={data.link || "#"} 
+            className="popup-bottom-close bg-red-600 border-red-600 hover:scale-105"
+            onClick={(e) => {
+              if (!data.link || data.link === "#") {
+                e.preventDefault();
+                setIsOpen(false);
+              }
+            }}
+          >
+            {data.btnText} <i className="fa-solid fa-arrow-right ml-2"></i>
+          </a>
+        )}
       </motion.div>
     </div>
   );
@@ -146,7 +158,9 @@ const Slider: React.FC<{ slides: Slide[] }> = ({ slides }) => {
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   
   const [touchStart, setTouchStart] = useState<number | null>(null);
-  const [touchEnd, setTouchEnd] = useState<number | null>(null);
+  const [dragOffset, setDragOffset] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const nextSlide = () => {
     setCurrentIdx((prev) => (prev + 1) % total);
@@ -176,28 +190,36 @@ const Slider: React.FC<{ slides: Slide[] }> = ({ slides }) => {
   };
 
   const handleTouchStart = (e: React.TouchEvent) => {
-    setTouchEnd(null);
+    if (total <= 1) return;
+    if (timerRef.current) clearInterval(timerRef.current);
     setTouchStart(e.targetTouches[0].clientX);
+    setIsDragging(true);
+    setDragOffset(0);
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
-    setTouchEnd(e.targetTouches[0].clientX);
+    if (!isDragging || touchStart === null) return;
+    const currentTouch = e.targetTouches[0].clientX;
+    const diff = currentTouch - touchStart;
+    setDragOffset(diff);
   };
 
   const handleTouchEnd = () => {
-    if (!touchStart || !touchEnd) return;
-    const distance = touchStart - touchEnd;
-    const isLeftSwipe = distance > 50;
-    const isRightSwipe = distance < -50;
-
-    if (isLeftSwipe) {
+    if (!isDragging) return;
+    setIsDragging(false);
+    
+    const threshold = 50; // px to trigger slide
+    if (dragOffset < -threshold) {
+      // Swipe Left -> Next
       setCurrentIdx((prev) => (prev + 1) % total);
-      resetTimer();
-    }
-    if (isRightSwipe) {
+    } else if (dragOffset > threshold) {
+      // Swipe Right -> Prev
       setCurrentIdx((prev) => (prev - 1 + total) % total);
-      resetTimer();
     }
+    
+    setDragOffset(0);
+    setTouchStart(null);
+    startTimer();
   };
 
   if (total === 0) {
@@ -211,11 +233,11 @@ const Slider: React.FC<{ slides: Slide[] }> = ({ slides }) => {
   }
 
   return (
-    <div className="w-full px-2">
-      <div className="relative w-full shadow-sm bg-gray-100 slider-aspect group overflow-hidden rounded-xl">
+    <div className="w-full px-2 relative group">
+      <div className="relative w-full shadow-sm bg-gray-100 slider-aspect overflow-hidden rounded-xl" ref={containerRef}>
         <div 
-          className="flex h-full w-full transition-transform duration-300 ease-out"
-          style={{ transform: `translateX(-${currentIdx * 100}%)` }}
+          className={`flex h-full w-full ${isDragging ? '' : 'transition-transform duration-300 ease-out'}`}
+          style={{ transform: `translateX(calc(-${currentIdx * 100}% + ${dragOffset}px))` }}
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
@@ -224,51 +246,63 @@ const Slider: React.FC<{ slides: Slide[] }> = ({ slides }) => {
             <a 
               key={slide.id}
               href={slide.link || "#"} 
-              className="min-w-full h-full block select-none"
+              className="min-w-full h-full block select-none relative"
               onClick={(e) => { 
                 if (e.defaultPrevented) return;
-                // If it's just "#", prevent default to avoid jumping to top
+                // Prevent click if we were dragging
+                if (Math.abs(dragOffset) > 5) {
+                  e.preventDefault();
+                  return;
+                }
                 if (!slide.link || slide.link === "#") {
                   e.preventDefault();
                 }
               }}
+              draggable={false}
             >
               <img 
                 src={slide.image} 
                 className="w-full h-full object-cover pointer-events-none" 
                 alt="Slide"
                 referrerPolicy="no-referrer"
+                draggable={false}
               />
             </a>
           ))}
         </div>
-
-        {/* Navigation Buttons */}
-        {total > 1 && (
-          <div className="absolute bottom-2 right-2 flex gap-1 z-10">
-            <button 
-              onClick={(e) => {
-                e.preventDefault();
-                setCurrentIdx((prev) => (prev - 1 + total) % total);
-                resetTimer();
-              }}
-              className="text-white w-7 h-7 flex items-center justify-center hover:text-gray-200 transition-colors"
-            >
-              <i className="fa-solid fa-chevron-left text-xs drop-shadow-md"></i>
-            </button>
-            <button 
-              onClick={(e) => {
-                e.preventDefault();
-                setCurrentIdx((prev) => (prev + 1) % total);
-                resetTimer();
-              }}
-              className="text-white w-7 h-7 flex items-center justify-center hover:text-gray-200 transition-colors"
-            >
-              <i className="fa-solid fa-chevron-right text-xs drop-shadow-md"></i>
-            </button>
-          </div>
-        )}
       </div>
+
+      {/* Navigation Buttons */}
+      {total > 1 && (
+        <div className="absolute bottom-4 right-4 flex gap-2 z-40 pointer-events-auto">
+          <button 
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setCurrentIdx((prev) => (prev - 1 + total) % total);
+              resetTimer();
+            }}
+            className="bg-black/40 text-white w-9 h-9 rounded-full flex items-center justify-center hover:bg-black/60 transition-colors backdrop-blur-sm cursor-pointer shadow-lg"
+            aria-label="Previous Slide"
+          >
+            <ChevronLeft className="w-5 h-5 drop-shadow-md" />
+          </button>
+          <button 
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setCurrentIdx((prev) => (prev + 1) % total);
+              resetTimer();
+            }}
+            className="bg-black/40 text-white w-9 h-9 rounded-full flex items-center justify-center hover:bg-black/60 transition-colors backdrop-blur-sm cursor-pointer shadow-lg"
+            aria-label="Next Slide"
+          >
+            <ChevronRight className="w-5 h-5 drop-shadow-md" />
+          </button>
+        </div>
+      )}
 
       {total > 1 && (
         <div className="flex justify-center gap-2 mt-2 mb-4">
