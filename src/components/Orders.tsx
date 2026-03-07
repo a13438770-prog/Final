@@ -211,18 +211,18 @@ const Orders: React.FC<OrdersProps> = ({ orders, onBack, onPayNow }) => {
 
               {/* Voucher / Redeem Codes Section */}
               {order.is_voucher && order.codes && order.codes.length > 0 && (
-                <div className="mt-2 pt-2 border-t border-gray-100">
-                  <div className="text-xs font-bold text-gray-900 mb-1.5 flex items-center gap-1.5">
+                <div className="mt-1.5 pt-1.5 border-t border-gray-100">
+                  <div className="text-[11px] font-bold text-gray-900 mb-1 flex items-center gap-1.5">
                     <i className="fa-solid fa-ticket text-red-500"></i> Redeem Codes
                   </div>
                   
-                  <div className="bg-gray-50 rounded-md border border-gray-200 mb-2 divide-y divide-gray-200">
+                  <div className="bg-gray-50 rounded-md border border-gray-200 mb-1.5 divide-y divide-gray-200">
                     {order.codes.map((code, idx) => (
-                      <div key={idx} className="flex items-center justify-between p-2">
+                      <div key={idx} className="flex items-center justify-between px-2 py-1">
                         <code className="text-xs font-mono font-bold text-gray-800 tracking-wider">{code}</code>
                         <button 
                           onClick={() => handleCopy(code)}
-                          className="w-7 h-7 flex items-center justify-center rounded bg-white border border-gray-200 text-gray-500 hover:text-red-600 hover:border-red-200 transition-colors"
+                          className="w-6 h-6 flex items-center justify-center text-gray-500 hover:text-red-600 transition-colors"
                           title="Copy Code"
                         >
                           {copiedCode === code ? <CheckCircle className="w-3.5 h-3.5 text-green-500" /> : <Copy className="w-3.5 h-3.5" />}
@@ -234,14 +234,14 @@ const Orders: React.FC<OrdersProps> = ({ orders, onBack, onPayNow }) => {
                   <div className="flex gap-2">
                     <button 
                       onClick={() => window.open('https://shop.garena.my/app', '_blank')}
-                      className="flex-1 bg-red-50 text-red-600 py-1.5 rounded-md text-xs font-bold border border-red-100 hover:bg-red-100 transition-colors flex items-center justify-center gap-1.5"
+                      className="flex-1 bg-red-50 text-red-600 py-2 rounded-md text-xs font-bold border border-red-100 hover:bg-red-100 transition-colors flex items-center justify-center gap-1.5"
                     >
                       <ExternalLink className="w-3.5 h-3.5" /> Redeem Now
                     </button>
                     {order.codes.length > 1 && (
                       <button 
                         onClick={() => handleCopyAll(order.codes!)}
-                        className="flex-1 bg-gray-900 text-white py-1.5 rounded-md text-xs font-bold hover:bg-gray-800 transition-colors flex items-center justify-center gap-1.5"
+                        className="flex-1 bg-gray-900 text-white py-2 rounded-md text-xs font-bold hover:bg-gray-800 transition-colors flex items-center justify-center gap-1.5"
                       >
                         {copiedCode === 'all' ? <CheckCircle className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
                         {copiedCode === 'all' ? 'Copied!' : 'Copy All'}

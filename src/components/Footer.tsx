@@ -101,8 +101,8 @@ const Footer: React.FC<FooterProps> = ({
             </div>
             <div className="w-[1px] h-8 bg-gray-200 shrink-0"></div>
             <div className="flex-1">
-              <h4 className="text-[13px] font-medium text-black m-0 font-['Bree_Serif',_serif]">
-                Whatsapp HelpLine - {socialLinks.helpline || "01xxxxxxxxx"}
+              <h4 className="text-[15px] font-bold text-black m-0 font-['Bree_Serif',_serif]">
+                WhatsApp Helpline
               </h4>
               <p className="text-xs text-[#4b5563] mt-0.5 font-['Noto_Serif_Bengali',_serif] font-normal">
                 সকাল ৯টা থেকে রাত ১২টা
@@ -121,7 +121,7 @@ const Footer: React.FC<FooterProps> = ({
             </div>
             <div className="w-[1px] h-8 bg-gray-200 shrink-0"></div>
             <div className="flex-1">
-              <h4 className="text-[13px] font-medium text-black m-0 font-['Bree_Serif',_serif]">
+              <h4 className="text-[15px] font-bold text-black m-0 font-['Bree_Serif',_serif]">
                 Telegram Support
               </h4>
               <p className="text-xs text-[#4b5563] mt-0.5 font-['Noto_Serif_Bengali',_serif] font-normal">
@@ -132,7 +132,7 @@ const Footer: React.FC<FooterProps> = ({
         </div>
 
         {/* Bottom Bar */}
-        <div className="text-center text-[13px] text-[#9ca3af] mt-6 pt-[15px] border-t border-[#e5e7eb] font-['Bree_Serif',_serif] space-y-1.5">
+        <div className="text-center text-[13px] text-[#9ca3af] mt-6 pt-[15px] border-t border-[#e5e7eb] font-['Bree_Serif',_serif] space-y-0.5">
           <div>© TopUp BD 2026 | All Rights Reserved</div>
           <div>Developed by <a href={developerLink} target="_blank" rel="noopener noreferrer" className="text-[#2563eb] font-medium">RIYAL Games</a></div>
         </div>

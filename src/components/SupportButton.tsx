@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { SocialLinks } from "./Footer";
+import { HelpCircle } from "lucide-react";
 
 interface SupportButtonProps {
   socialLinks: SocialLinks;
+  onNavigateToSupport?: () => void;
 }
 
-const SupportButton: React.FC<SupportButtonProps> = ({ socialLinks }) => {
+const SupportButton: React.FC<SupportButtonProps> = ({ socialLinks, onNavigateToSupport }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
 
@@ -68,6 +70,19 @@ const SupportButton: React.FC<SupportButtonProps> = ({ socialLinks }) => {
           >
             <i className="fa-brands fa-facebook-messenger"></i>
           </a>
+        )}
+        
+        {onNavigateToSupport && (
+          <button
+            onClick={() => {
+              setIsOpen(false);
+              onNavigateToSupport();
+            }}
+            className="w-12 h-12 bg-gray-800 rounded-full shadow-lg flex items-center justify-center text-white text-2xl transition-transform hover:scale-110 active:scale-95"
+            title="Support Center"
+          >
+            <HelpCircle className="w-6 h-6" />
+          </button>
         )}
       </div>
 

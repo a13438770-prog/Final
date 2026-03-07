@@ -39,7 +39,7 @@ const Auth: React.FC<AuthProps> = ({ onLogin, onSignup, onForgotPassword, siteNa
   };
 
   return (
-    <div className="container mx-auto px-2 py-10">
+    <div className="container mx-auto px-2 pt-6 pb-10">
       <AnimatePresence mode="wait">
         {isLogin ? (
           <motion.div

@@ -1,6 +1,6 @@
 import React from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { User as UserIcon, ShoppingBag, ShoppingCart, History, MapPin, LogOut } from "lucide-react";
+import { User as UserIcon, ShoppingBag, ShoppingCart, History, MapPin, LogOut, HelpCircle } from "lucide-react";
 
 /**
  * Interface for User Information
@@ -9,12 +9,14 @@ interface User {
   name: string;
   email: string;
   avatar?: string;
+  ordersCount?: number;
 }
 
 interface SidebarProps {
   isOpen: boolean;
   onClose: () => void;
   user: User | null;
+  cartCount?: number;
   onLogout?: () => void;
   onLogin?: () => void;
   onNavigate?: (view: 'home' | 'transactions' | 'addmoney' | 'orders' | 'profile') => void;
@@ -28,7 +30,8 @@ const SidebarItem: React.FC<{
   icon: React.ReactNode; 
   label: string;
   onClick?: () => void;
-}> = ({ href, icon, label, onClick }) => (
+  badge?: number;
+}> = ({ href, icon, label, onClick, badge }) => (
   <a 
     href={href} 
     onClick={(e) => {
@@ -37,12 +40,19 @@ const SidebarItem: React.FC<{
         onClick();
       }
     }}
-    className="flex items-center gap-4 p-3 rounded-lg hover:bg-gray-50 group transition-colors cursor-pointer"
+    className="flex items-center gap-4 p-3 rounded-lg hover:bg-gray-50 group transition-colors cursor-pointer justify-between"
   >
-    <div className="w-5 h-5 text-gray-700">
-      {icon}
+    <div className="flex items-center gap-4">
+      <div className="w-5 h-5 text-gray-700">
+        {icon}
+      </div>
+      <span className="font-medium text-gray-700 text-sm tracking-wide">{label}</span>
     </div>
-    <span className="font-medium text-gray-700 text-sm tracking-wide">{label}</span>
+    {badge !== undefined && badge > 0 && (
+      <span className="bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
+        {badge}
+      </span>
+    )}
   </a>
 );
 
@@ -53,6 +63,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   isOpen, 
   onClose, 
   user, 
+  cartCount = 0,
   onLogout, 
   onLogin,
   onNavigate
@@ -121,14 +132,8 @@ const Sidebar: React.FC<SidebarProps> = ({
               onNavigate?.('cart' as any);
               onClose();
             }}
-            icon={
-              <div className="relative">
-                <ShoppingCart className="w-5 h-5" />
-                <span className="absolute -top-1.5 -right-1.5 bg-red-600 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
-                  3
-                </span>
-              </div>
-            }
+            icon={<ShoppingCart className="w-5 h-5" />}
+            badge={cartCount}
           />
 
           <SidebarItem 
@@ -136,6 +141,7 @@ const Sidebar: React.FC<SidebarProps> = ({
             label="Orders" 
             onClick={() => handleNav('orders')}
             icon={<ShoppingBag className="w-5 h-5" />}
+            badge={user?.ordersCount} // Assuming user object might have this, or we can pass it as a prop. For now, let's just pass a mock value or leave it undefined if not available.
           />
 
           <SidebarItem 
@@ -153,6 +159,16 @@ const Sidebar: React.FC<SidebarProps> = ({
               onClose();
             }}
             icon={<MapPin className="w-5 h-5" />}
+          />
+
+          <SidebarItem 
+            href="#" 
+            label="Support Center" 
+            onClick={() => {
+              onNavigate?.('support' as any);
+              onClose();
+            }}
+            icon={<HelpCircle className="w-5 h-5" />}
           />
         </nav>
         

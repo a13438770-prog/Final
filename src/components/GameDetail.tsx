@@ -29,6 +29,15 @@ interface GameDetailProps {
     playerId: string;
     paymentMethod: 'wallet' | 'online';
   }) => void;
+  onAddToCart?: (data: {
+    productId: number;
+    playerId: string;
+    quantity: number;
+    productName: string;
+    price: number;
+    gameName: string;
+    image: string;
+  }) => void;
 }
 
 const GameDetail: React.FC<GameDetailProps> = ({ 
@@ -39,7 +48,8 @@ const GameDetail: React.FC<GameDetailProps> = ({
   onAuthRequired,
   onBack, 
   onRefreshBalance,
-  onPurchase 
+  onPurchase,
+  onAddToCart
 }) => {
   const [selectedProductId, setSelectedProductId] = useState<number | null>(null);
   const [playerId, setPlayerId] = useState("");
@@ -110,6 +120,35 @@ const GameDetail: React.FC<GameDetailProps> = ({
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
+  };
+
+  const handleAddToCart = () => {
+    if (!isLoggedIn) {
+      onAuthRequired();
+      return;
+    }
+
+    const newErrors: { [key: string]: string } = {};
+    if (!selectedProductId) newErrors.product = "Please select a package";
+    if (!isVoucher && !playerId.trim()) newErrors.playerId = "Player ID is required";
+    
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
+    if (onAddToCart && selectedProduct) {
+      onAddToCart({
+        productId: selectedProduct.id,
+        playerId: isVoucher ? '' : playerId,
+        quantity: quantity,
+        productName: selectedProduct.name,
+        price: selectedProduct.price,
+        gameName: game.name,
+        image: game.image
+      });
+      // Optional: show a success message or toast here
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -299,19 +338,26 @@ const GameDetail: React.FC<GameDetailProps> = ({
                 onChange={() => setPaymentMethod('wallet')}
                 className="pay-radio sr-only"
               />
-              <div className={`pkg-card p-1.5 h-full flex flex-col justify-center items-center relative ${paymentMethod === 'wallet' ? 'border-[#dc2626] bg-[#fff1f2] outline outline-1 outline-[#dc2626] shadow-[0_0_0_1px_#dc2626]' : ''}`}>
+              <div className={`pkg-card h-28 flex flex-col relative overflow-hidden rounded-lg bg-white ${paymentMethod === 'wallet' ? 'border-[#dc2626] outline outline-2 outline-[#dc2626] shadow-[0_0_0_2px_#dc2626]' : 'border-gray-300 border'}`}>
+                <div className="flex-1 relative">
+                  {!isLoggedIn ? (
+                    <div className="absolute inset-0 bg-gray-50 flex items-center justify-center z-10">
+                      <span className="text-gray-500 font-bold text-sm">Login required</span>
+                    </div>
+                  ) : (
+                    <img src="https://ais-dev-nofag6mtpb7ssbqxxcqxzf-8795195565.asia-southeast1.run.app/res/images/walletpay.png" className="absolute inset-0 w-full h-full object-cover object-center" alt="Wallet" referrerPolicy="no-referrer" onError={(e) => { e.currentTarget.src = 'https://picsum.photos/seed/wallet/150/60'; }} />
+                  )}
+                </div>
+                <div className="bg-[#e9ecef] pt-1 pb-1.5 px-2 border-t border-gray-200 flex items-end justify-start">
+                  <span className="font-bree text-gray-700 text-xs font-bold leading-none">
+                    {isLoggedIn ? `Wallet Pay - ${userBalance.toFixed(0)}৳` : 'Wallet Pay'}
+                  </span>
+                </div>
                 {paymentMethod === 'wallet' && (
-                  <div className="absolute left-2 top-1/2 -translate-y-1/2 text-[#dc2626] text-sm z-10">
-                    <i className="fa-solid fa-circle-check"></i>
+                  <div className="absolute right-2 top-2 text-white text-sm z-10 bg-red-600 rounded-full w-5 h-5 flex items-center justify-center shadow-sm">
+                    <i className="fa-solid fa-check text-[10px]"></i>
                   </div>
                 )}
-                <img src="https://ais-dev-kft2mugwq7fnkyubdpfn7o-342179268189.asia-southeast1.run.app/res/images/walletpay.png" className="h-6 object-contain mb-1" alt="Wallet" referrerPolicy="no-referrer" />
-                <span className="pkg-title font-bree text-center block px-4">
-                  Wallet Pay
-                </span>
-                <span className="pkg-price font-bree text-[11px] text-gray-500">
-                  {isLoggedIn ? `Balance: ৳ ${userBalance.toFixed(2)}` : 'Login required'}
-                </span>
               </div>
             </label>
 
@@ -324,19 +370,20 @@ const GameDetail: React.FC<GameDetailProps> = ({
                 onChange={() => setPaymentMethod('online')}
                 className="pay-radio sr-only"
               />
-              <div className={`pkg-card p-1.5 h-full flex flex-col justify-center items-center relative ${paymentMethod === 'online' ? 'border-[#dc2626] bg-[#fff1f2] outline outline-1 outline-[#dc2626] shadow-[0_0_0_1px_#dc2626]' : ''}`}>
+              <div className={`pkg-card h-28 flex flex-col relative overflow-hidden rounded-lg bg-white ${paymentMethod === 'online' ? 'border-[#dc2626] outline outline-2 outline-[#dc2626] shadow-[0_0_0_2px_#dc2626]' : 'border-gray-300 border'}`}>
+                <div className="flex-1 relative">
+                  <img src="https://ais-dev-nofag6mtpb7ssbqxxcqxzf-8795195565.asia-southeast1.run.app/res/images/instantpay.png" className="absolute inset-0 w-full h-full object-cover object-center" alt="Instant" referrerPolicy="no-referrer" onError={(e) => { e.currentTarget.src = 'https://picsum.photos/seed/instant/150/60'; }} />
+                </div>
+                <div className="bg-[#e9ecef] pt-1 pb-1.5 px-2 border-t border-gray-200 flex items-end justify-start">
+                  <span className="font-bree text-gray-700 text-xs font-bold leading-none">
+                    Instant Pay
+                  </span>
+                </div>
                 {paymentMethod === 'online' && (
-                  <div className="absolute left-2 top-1/2 -translate-y-1/2 text-[#dc2626] text-sm z-10">
-                    <i className="fa-solid fa-circle-check"></i>
+                  <div className="absolute right-2 top-2 text-white text-sm z-10 bg-red-600 rounded-full w-5 h-5 flex items-center justify-center shadow-sm">
+                    <i className="fa-solid fa-check text-[10px]"></i>
                   </div>
                 )}
-                <img src="https://ais-dev-kft2mugwq7fnkyubdpfn7o-342179268189.asia-southeast1.run.app/res/images/instantpay.png" className="h-6 object-contain mb-1" alt="Instant" referrerPolicy="no-referrer" />
-                <span className="pkg-title font-bree text-center block px-4">
-                  Instant Pay
-                </span>
-                <span className="pkg-price font-bree text-[11px] text-gray-500">
-                  Pay via bKash/Nagad
-                </span>
               </div>
             </label>
           </div>
@@ -387,6 +434,7 @@ const GameDetail: React.FC<GameDetailProps> = ({
           <div className="flex gap-2">
             <button 
               type="button"
+              onClick={handleAddToCart}
               className="w-12 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bree py-2.5 rounded-lg shadow-sm transition-all active:scale-95 text-base flex items-center justify-center flex-shrink-0 border border-gray-200"
               title="Add to Cart"
             >

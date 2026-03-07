@@ -1,18 +1,17 @@
 import React from 'react';
 import { ArrowLeft, Trash2, ShoppingCart } from 'lucide-react';
 
+import { CartItem } from '../App';
+
 interface CartProps {
+  cartItems: CartItem[];
+  onUpdateQuantity: (id: string, quantity: number) => void;
+  onRemoveItem: (id: string) => void;
   onBack: () => void;
-  onCheckout: () => void;
+  onCheckout: (amount: number) => void;
 }
 
-const Cart: React.FC<CartProps> = ({ onBack, onCheckout }) => {
-  // Mock cart items
-  const cartItems = [
-    { id: 1, name: 'Free Fire 100 Diamonds', price: 85, quantity: 1, image: 'https://picsum.photos/seed/ff/100/100' },
-    { id: 2, name: 'PUBG 60 UC', price: 95, quantity: 2, image: 'https://picsum.photos/seed/pubg/100/100' }
-  ];
-
+const Cart: React.FC<CartProps> = ({ cartItems, onUpdateQuantity, onRemoveItem, onBack, onCheckout }) => {
   const total = cartItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
 
   return (
@@ -48,11 +47,20 @@ const Cart: React.FC<CartProps> = ({ onBack, onCheckout }) => {
                     </div>
                     <div className="flex items-center justify-between mt-2">
                       <div className="flex items-center gap-3 bg-gray-50 rounded-lg px-2 py-1 border border-gray-200">
-                        <button className="w-6 h-6 flex items-center justify-center text-gray-600 font-bold hover:text-red-600 transition-colors">-</button>
+                        <button 
+                          onClick={() => onUpdateQuantity(item.id, item.quantity - 1)}
+                          className="w-6 h-6 flex items-center justify-center text-gray-600 font-bold hover:text-red-600 transition-colors"
+                        >-</button>
                         <span className="text-sm font-bold w-4 text-center text-gray-900">{item.quantity}</span>
-                        <button className="w-6 h-6 flex items-center justify-center text-gray-600 font-bold hover:text-red-600 transition-colors">+</button>
+                        <button 
+                          onClick={() => onUpdateQuantity(item.id, item.quantity + 1)}
+                          className="w-6 h-6 flex items-center justify-center text-gray-600 font-bold hover:text-red-600 transition-colors"
+                        >+</button>
                       </div>
-                      <button className="w-8 h-8 flex items-center justify-center rounded-lg bg-red-50 text-red-500 hover:bg-red-100 hover:text-red-600 transition-colors border border-red-100">
+                      <button 
+                        onClick={() => onRemoveItem(item.id)}
+                        className="w-8 h-8 flex items-center justify-center rounded-lg bg-red-50 text-red-500 hover:bg-red-100 hover:text-red-600 transition-colors border border-red-100"
+                      >
                         <Trash2 className="w-4 h-4" />
                       </button>
                     </div>
@@ -83,7 +91,7 @@ const Cart: React.FC<CartProps> = ({ onBack, onCheckout }) => {
 
               {/* Checkout Button */}
               <button 
-                onClick={onCheckout}
+                onClick={() => onCheckout(total)}
                 className="w-full bg-[#dc2626] hover:opacity-90 text-white font-bree py-3.5 rounded-xl shadow-sm transition-all active:scale-95 text-base tracking-wide mt-4 flex items-center justify-center gap-2"
               >
                 Proceed to Checkout <i className="fa-solid fa-arrow-right text-sm"></i>

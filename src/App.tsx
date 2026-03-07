@@ -21,6 +21,7 @@ import PageLoader from "./components/PageLoader";
 import NotificationModal, { NotifType } from "./components/NotificationModal";
 import Cart from "./components/Cart";
 import OrderTracker from "./components/OrderTracker";
+import Support from "./components/Support";
 
 /**
  * Mock data for Header
@@ -136,11 +137,11 @@ const mockProducts: Product[] = [
 ];
 
 const mockLatestOrders: Order[] = [
-  { id: 1, user_name: "Super Admin", product_name: "115 Diamond", amount: 76.00, created_at: "03 Mar, 2026 10:27", status: "Processing" },
-  { id: 2, user_name: "Super Admin", product_name: "115 Diamond", amount: 76.00, created_at: "03 Mar, 2026 10:26", status: "Processing" },
-  { id: 3, user_name: "Super Admin", product_name: "115 Diamond Code", amount: 78.00, created_at: "03 Mar, 2026 10:23", status: "Completed" },
-  { id: 4, user_name: "Super Admin", product_name: "115 Diamond Code", amount: 78.00, created_at: "03 Mar, 2026 10:23", status: "Completed" },
-  { id: 5, user_name: "Super Admin", product_name: "115 Diamond Code", amount: 78.00, created_at: "03 Mar, 2026 10:23", status: "Completed" },
+  { id: 1, user_name: "Super Admin", game_name: "Free Fire", product_name: "115 Diamond", amount: 76.00, created_at: "03 Mar, 2026 10:27", status: "Processing" },
+  { id: 2, user_name: "Super Admin", game_name: "Free Fire", product_name: "115 Diamond", amount: 76.00, created_at: "03 Mar, 2026 10:26", status: "Processing" },
+  { id: 3, user_name: "Super Admin", game_name: "Free Fire", product_name: "115 Diamond Code", amount: 78.00, created_at: "03 Mar, 2026 10:23", status: "Completed" },
+  { id: 4, user_name: "Super Admin", game_name: "Free Fire", product_name: "115 Diamond Code", amount: 78.00, created_at: "03 Mar, 2026 10:23", status: "Completed" },
+  { id: 5, user_name: "Super Admin", game_name: "Free Fire", product_name: "115 Diamond Code", amount: 78.00, created_at: "03 Mar, 2026 10:23", status: "Completed" },
 ];
 
 const mockPopup: PopupData = {
@@ -250,9 +251,20 @@ const mockUserStats: UserStats = {
   total_orders: 42
 };
 
-type AppView = 'home' | 'transactions' | 'addmoney' | 'orders' | 'profile' | 'game_detail' | 'auth' | 'checkout' | 'forgot_password' | 'reset_password' | 'payment_verify' | 'cart' | 'order_tracker';
+type AppView = 'home' | 'transactions' | 'addmoney' | 'orders' | 'profile' | 'game_detail' | 'auth' | 'checkout' | 'forgot_password' | 'reset_password' | 'payment_verify' | 'cart' | 'order_tracker' | 'support';
 
-const GameDetailRoute = ({ products, userBalance, isLoggedIn, onAuthRequired, onBack, onRefreshBalance, onPurchase }: any) => {
+export interface CartItem {
+  id: string;
+  productId: number;
+  name: string;
+  price: number;
+  quantity: number;
+  image: string;
+  playerId?: string;
+  gameName: string;
+}
+
+const GameDetailRoute = ({ products, userBalance, isLoggedIn, onAuthRequired, onBack, onRefreshBalance, onPurchase, onAddToCart }: any) => {
   const { id } = useParams();
   const game = mockGames.find(g => g.id === Number(id));
   if (!game) return <div className="p-8 text-center">Game not found</div>;
@@ -266,6 +278,7 @@ const GameDetailRoute = ({ products, userBalance, isLoggedIn, onAuthRequired, on
       onBack={onBack}
       onRefreshBalance={onRefreshBalance}
       onPurchase={onPurchase}
+      onAddToCart={onAddToCart}
     />
   );
 };
@@ -301,6 +314,7 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [checkoutAmount, setCheckoutAmount] = useState<number>(0);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string>('bkash');
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
   
   // Notification State
   const [notif, setNotif] = useState<{
@@ -335,6 +349,49 @@ export default function App() {
 
   const handleGameClick = (id: number) => {
     navigate(`/game/${id}`);
+  };
+
+  const handleAddToCart = (data: {
+    productId: number;
+    playerId: string;
+    quantity: number;
+    productName: string;
+    price: number;
+    gameName: string;
+    image: string;
+  }) => {
+    setCartItems(prev => {
+      const existing = prev.find(i => i.productId === data.productId && i.playerId === data.playerId);
+      if (existing) {
+        return prev.map(i => i.id === existing.id ? { ...i, quantity: i.quantity + data.quantity } : i);
+      }
+      return [...prev, {
+        id: Math.random().toString(36).substr(2, 9),
+        productId: data.productId,
+        name: data.productName,
+        price: data.price,
+        quantity: data.quantity,
+        image: data.image,
+        playerId: data.playerId,
+        gameName: data.gameName
+      }];
+    });
+    
+    setNotif({
+      isOpen: true,
+      type: 'success',
+      title: 'Added to Cart',
+      message: `${data.productName} has been added to your cart.`
+    });
+  };
+
+  const updateCartQuantity = (id: string, quantity: number) => {
+    if (quantity < 1) return;
+    setCartItems(prev => prev.map(i => i.id === id ? { ...i, quantity } : i));
+  };
+
+  const removeFromCart = (id: string) => {
+    setCartItems(prev => prev.filter(i => i.id !== id));
   };
 
   const handleToggleSidebar = () => {
@@ -379,7 +436,7 @@ export default function App() {
       <ScrollToTop />
       <PageLoader isLoading={isLoading} />
       
-      {(view === 'home' || view === 'game_detail' || view === 'orders' || view === 'profile' || view === 'auth' || view === 'addmoney' || view === 'transactions' || view === 'forgot_password' || view === 'reset_password' || view === 'cart' || view === 'order_tracker') && (
+      {(view === 'home' || view === 'game_detail' || view === 'orders' || view === 'profile' || view === 'auth' || view === 'addmoney' || view === 'transactions' || view === 'forgot_password' || view === 'reset_password' || view === 'cart' || view === 'order_tracker' || view === 'support') && (
         <Header 
           siteInfo={mockSiteInfo} 
           user={isLoggedIn ? mockUser : null} 
@@ -395,7 +452,8 @@ export default function App() {
       <Sidebar 
         isOpen={isSidebarOpen} 
         onClose={() => setIsSidebarOpen(false)} 
-        user={isLoggedIn ? mockUser : null}
+        user={isLoggedIn ? { ...mockUser, ordersCount: mockOrderDetails.filter(o => o.status === 'pending' || o.status === 'processing').length } : null}
+        cartCount={cartItems.length}
         onLogout={handleLogout}
         onLogin={handleLogin}
         onNavigate={(v) => handleNavigate(v as AppView)}
@@ -407,7 +465,10 @@ export default function App() {
         downloadLink="https://example.com/app.apk"
       />
 
-      <SupportButton socialLinks={mockSocialLinks} />
+      <SupportButton 
+        socialLinks={mockSocialLinks} 
+        onNavigateToSupport={() => handleNavigate('support')}
+      />
 
       <BottomNav 
         activeView={view} 
@@ -461,6 +522,7 @@ export default function App() {
                   setNotif({ isOpen: true, type: 'success', title: 'Order Placed', message: 'Your order has been placed successfully!' });
                   handleNavigate('home');
                 }}
+                onAddToCart={handleAddToCart}
               />
               <Footer logo={mockSiteInfo.logo} siteName={mockSiteInfo.name} socialLinks={mockSocialLinks} />
             </>
@@ -479,6 +541,7 @@ export default function App() {
                 user={{ ...mockUser, email: "user@example.com", phone: "01700000000" }} 
                 stats={mockUserStats}
                 onRefresh={() => { setIsLoading(true); setTimeout(() => setIsLoading(false), 500); }}
+                onLogout={handleLogout}
               />
               <Footer logo={mockSiteInfo.logo} siteName={mockSiteInfo.name} socialLinks={mockSocialLinks} />
             </>
@@ -565,8 +628,14 @@ export default function App() {
           <Route path="/cart" element={
             <>
               <Cart 
+                cartItems={cartItems}
+                onUpdateQuantity={updateCartQuantity}
+                onRemoveItem={removeFromCart}
                 onBack={() => handleNavigate('home')} 
-                onCheckout={() => handleNavigate('checkout')} 
+                onCheckout={(amount) => {
+                  setCheckoutAmount(amount);
+                  handleNavigate('checkout');
+                }} 
               />
               <Footer logo={mockSiteInfo.logo} siteName={mockSiteInfo.name} socialLinks={mockSocialLinks} />
             </>
@@ -581,6 +650,12 @@ export default function App() {
             </>
           } />
           
+          <Route path="/support" element={
+            <Support 
+              onBack={() => handleNavigate('home')} 
+              socialLinks={mockSocialLinks}
+            />
+          } />
           <Route path="*" element={
             <div className="flex flex-col items-center justify-center min-h-[60vh] px-6 text-center">
               <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-4">

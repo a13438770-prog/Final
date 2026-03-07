@@ -33,6 +33,7 @@ export interface Order {
   id: number;
   user_name: string;
   user_image?: string;
+  game_name?: string;
   product_name: string;
   amount: number;
   created_at?: string;
@@ -251,9 +252,9 @@ const Slider: React.FC<{ slides: Slide[] }> = ({ slides }) => {
                 setCurrentIdx((prev) => (prev - 1 + total) % total);
                 resetTimer();
               }}
-              className="bg-black/40 hover:bg-black/60 text-white w-7 h-7 rounded-full flex items-center justify-center backdrop-blur-sm"
+              className="text-white w-7 h-7 flex items-center justify-center hover:text-gray-200 transition-colors"
             >
-              <i className="fa-solid fa-chevron-left text-xs"></i>
+              <i className="fa-solid fa-chevron-left text-xs drop-shadow-md"></i>
             </button>
             <button 
               onClick={(e) => {
@@ -261,9 +262,9 @@ const Slider: React.FC<{ slides: Slide[] }> = ({ slides }) => {
                 setCurrentIdx((prev) => (prev + 1) % total);
                 resetTimer();
               }}
-              className="bg-black/40 hover:bg-black/60 text-white w-7 h-7 rounded-full flex items-center justify-center backdrop-blur-sm"
+              className="text-white w-7 h-7 flex items-center justify-center hover:text-gray-200 transition-colors"
             >
-              <i className="fa-solid fa-chevron-right text-xs"></i>
+              <i className="fa-solid fa-chevron-right text-xs drop-shadow-md"></i>
             </button>
           </div>
         )}
@@ -390,29 +391,29 @@ const LatestOrders: React.FC<{ orders: Order[] }> = ({ orders }) => {
         <h2 className="latest-orders-title">Latest Orders</h2>
         <p className="latest-orders-subtitle">সবচেয়ে সাম্প্রতিক <span>5টি অর্ডার</span> এক নজরে</p>
         
-        <div className="flex flex-col gap-3 mt-4">
+        <div className="flex flex-col gap-2 mt-3">
           {orders.length > 0 ? (
             orders.map((order) => {
               const initial = order.user_name ? order.user_name.charAt(0).toUpperCase() : 'G';
               const status = order.status || (order.id % 2 === 0 ? 'Processing' : 'Completed');
               
               return (
-                <div key={order.id} className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 flex items-center justify-between gap-2">
-                  <div className="flex items-center gap-4 flex-1 min-w-0">
-                    <div className="w-[50px] h-[50px] rounded-full bg-[#e5e7eb] flex items-center justify-center text-gray-800 font-normal text-2xl flex-shrink-0 shadow-sm">
+                <div key={order.id} className="bg-white rounded-xl p-3 shadow-sm border border-gray-100 flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-3 flex-1 min-w-0">
+                    <div className="w-[40px] h-[40px] rounded-full bg-[#e5e7eb] flex items-center justify-center text-gray-800 font-normal text-xl flex-shrink-0 shadow-sm">
                       {initial}
                     </div>
                     
                     <div className="flex flex-col flex-1 min-w-0">
-                      <h4 className="font-bold text-gray-900 text-[17px] font-bree">{order.user_name || 'Guest'}</h4>
-                      <p className="text-[14px] text-gray-600 mt-0.5 leading-snug">
-                        {order.product_name} — <span className="font-bold text-gray-900">{order.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}৳</span>
+                      <h4 className="font-bold text-gray-900 text-[15px] font-bree">{order.user_name || 'Guest'}</h4>
+                      <p className="text-[12px] text-gray-600 mt-0.5 leading-snug">
+                        {order.game_name ? `${order.game_name} - ` : ''}{order.product_name} — <span className="font-bold text-gray-900">{order.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}৳</span>
                       </p>
                     </div>
                   </div>
                   
-                  <div className="flex flex-col items-end gap-2 text-right flex-shrink-0">
-                    <span className={`px-4 py-1.5 rounded-full text-[12px] font-bold ${
+                  <div className="flex flex-col items-end gap-1 text-right flex-shrink-0">
+                    <span className={`px-3 py-1 rounded-full text-[10px] font-bold ${
                       status === 'Processing' 
                         ? 'bg-[#eab308] text-black' 
                         : 'bg-[#22c55e] text-white'
@@ -420,7 +421,7 @@ const LatestOrders: React.FC<{ orders: Order[] }> = ({ orders }) => {
                       {status}
                     </span>
                     {order.created_at && (
-                      <span className="text-[12px] text-gray-500 font-medium max-w-[90px] leading-tight">
+                      <span className="text-[10px] text-gray-500 font-medium max-w-[90px] leading-tight">
                         {order.created_at}
                       </span>
                     )}

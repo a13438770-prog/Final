@@ -11,7 +11,7 @@ const AddMoney: React.FC<AddMoneyProps> = ({ videoLink, onProceed, onViewTransac
   const [amount, setAmount] = useState<string>("");
   const [error, setError] = useState<string>("");
 
-  const quickAmounts = [100, 500, 1000, 2000, 5000, 10000];
+  const quickAmounts = [100, 500, 1000];
 
   // Helper Function to convert ANY YouTube link to Embed link
   const getYoutubeEmbedUrl = (url: string) => {

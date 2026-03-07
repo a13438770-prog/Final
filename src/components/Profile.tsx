@@ -15,9 +15,10 @@ interface ProfileProps {
   user: UserType & { email: string; phone: string; location?: string; joinedYear?: string };
   stats: UserStats;
   onRefresh: () => void;
+  onLogout?: () => void;
 }
 
-const Profile: React.FC<ProfileProps> = ({ user, stats, onRefresh }) => {
+const Profile: React.FC<ProfileProps> = ({ user, stats, onRefresh, onLogout }) => {
   const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
   const [editForm, setEditForm] = useState({
@@ -135,11 +136,7 @@ const Profile: React.FC<ProfileProps> = ({ user, stats, onRefresh }) => {
               alt={user.name}
               referrerPolicy="no-referrer"
             />
-            {!isEditing ? (
-              <div className="absolute -bottom-1 -right-1 bg-green-500 w-6 h-6 rounded-full border-2 border-white flex items-center justify-center shadow-sm">
-                <CheckCircle className="w-3.5 h-3.5 text-white" />
-              </div>
-            ) : (
+            {isEditing && (
               <button 
                 onClick={() => fileInputRef.current?.click()}
                 className="absolute -bottom-1 -right-1 bg-red-600 w-7 h-7 rounded-full border-2 border-white flex items-center justify-center shadow-sm hover:bg-red-700 transition-colors"
@@ -168,8 +165,8 @@ const Profile: React.FC<ProfileProps> = ({ user, stats, onRefresh }) => {
               <h2 className="text-lg font-bold text-gray-900 font-bree truncate">{editForm.name}</h2>
             )}
             <p className="text-sm text-gray-500 truncate">{editForm.email}</p>
-            <div className="mt-1.5 inline-flex items-center gap-1 px-2 py-0.5 bg-yellow-50 border border-yellow-200 text-yellow-700 rounded text-[10px] font-bold uppercase tracking-wider">
-              <i className="fa-solid fa-crown text-yellow-500"></i> Gold Member
+            <div className="mt-1.5 inline-flex items-center gap-1 px-2 py-0.5 bg-green-50 border border-green-200 text-green-700 rounded text-[10px] font-bold uppercase tracking-wider">
+              <CheckCircle className="w-3 h-3 text-green-500" /> Verified
             </div>
           </div>
         </motion.div>
@@ -432,9 +429,12 @@ const Profile: React.FC<ProfileProps> = ({ user, stats, onRefresh }) => {
         >
           <button 
             onClick={() => {
-              // Add logout logic here
-              console.log("Logging out...");
-              navigate('/'); // Redirect to home or login page
+              if (onLogout) {
+                onLogout();
+              } else {
+                console.log("Logging out...");
+                navigate('/');
+              }
             }}
             className="w-full bg-white border border-red-200 text-red-600 hover:bg-red-50 font-bold py-3.5 rounded-xl shadow-sm transition-colors flex items-center justify-center gap-2"
           >
