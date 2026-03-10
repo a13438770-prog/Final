@@ -233,76 +233,46 @@ const Slider: React.FC<{ slides: Slide[] }> = ({ slides }) => {
   }
 
   return (
-    <div className="w-full px-2 relative group">
-      <div className="relative w-full shadow-sm bg-gray-100 slider-aspect overflow-hidden rounded-xl" ref={containerRef}>
-        <div 
-          className={`flex h-full w-full ${isDragging ? '' : 'transition-transform duration-300 ease-out'}`}
-          style={{ transform: `translateX(calc(-${currentIdx * 100}% + ${dragOffset}px))` }}
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd}
-        >
-          {slides.map((slide) => (
-            <a 
-              key={slide.id}
-              href={slide.link || "#"} 
-              className="min-w-full h-full block select-none relative"
-              onClick={(e) => { 
-                if (e.defaultPrevented) return;
-                // Prevent click if we were dragging
-                if (Math.abs(dragOffset) > 5) {
-                  e.preventDefault();
-                  return;
-                }
-                if (!slide.link || slide.link === "#") {
-                  e.preventDefault();
-                }
-              }}
-              draggable={false}
-            >
-              <img 
-                src={slide.image} 
-                className="w-full h-full object-cover pointer-events-none" 
-                alt="Slide"
-                referrerPolicy="no-referrer"
+    <div className="w-full px-2">
+      <div className="relative w-full">
+        <div className="relative w-full shadow-sm bg-gray-100 slider-aspect overflow-hidden rounded-xl" ref={containerRef}>
+          <div 
+            className={`flex h-full w-full ${isDragging ? '' : 'transition-transform duration-300 ease-out'}`}
+            style={{ transform: `translateX(calc(-${currentIdx * 100}% + ${dragOffset}px))` }}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+          >
+            {slides.map((slide) => (
+              <a 
+                key={slide.id}
+                href={slide.link || "#"} 
+                className="min-w-full h-full block select-none relative"
+                onClick={(e) => { 
+                  if (e.defaultPrevented) return;
+                  // Prevent click if we were dragging
+                  if (Math.abs(dragOffset) > 5) {
+                    e.preventDefault();
+                    return;
+                  }
+                  if (!slide.link || slide.link === "#") {
+                    e.preventDefault();
+                  }
+                }}
                 draggable={false}
-              />
-            </a>
-          ))}
+              >
+                <img 
+                  src={slide.image} 
+                  className="w-full h-full object-cover pointer-events-none" 
+                  alt="Slide"
+                  referrerPolicy="no-referrer"
+                  draggable={false}
+                />
+              </a>
+            ))}
+          </div>
         </div>
       </div>
-
-      {/* Navigation Buttons */}
-      {total > 1 && (
-        <div className="absolute bottom-4 right-4 flex gap-2 z-40 pointer-events-auto">
-          <button 
-            type="button"
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              setCurrentIdx((prev) => (prev - 1 + total) % total);
-              resetTimer();
-            }}
-            className="bg-black/40 text-white w-9 h-9 rounded-full flex items-center justify-center hover:bg-black/60 transition-colors backdrop-blur-sm cursor-pointer shadow-lg"
-            aria-label="Previous Slide"
-          >
-            <ChevronLeft className="w-5 h-5 drop-shadow-md" />
-          </button>
-          <button 
-            type="button"
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              setCurrentIdx((prev) => (prev + 1) % total);
-              resetTimer();
-            }}
-            className="bg-black/40 text-white w-9 h-9 rounded-full flex items-center justify-center hover:bg-black/60 transition-colors backdrop-blur-sm cursor-pointer shadow-lg"
-            aria-label="Next Slide"
-          >
-            <ChevronRight className="w-5 h-5 drop-shadow-md" />
-          </button>
-        </div>
-      )}
 
       {total > 1 && (
         <div className="flex justify-center gap-2 mt-2 mb-4">

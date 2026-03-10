@@ -33,27 +33,34 @@ const BottomNav: React.FC<BottomNavProps> = ({ activeView, onNavigate, user }) =
     {
       id: 'home',
       label: 'Home',
-      icon: <Home className="w-6 h-6" />
+      renderIcon: (isActive: boolean) => (
+        <img 
+          src="https://cdn-icons-png.flaticon.com/512/1946/1946488.png" 
+          alt="Home" 
+          className={`w-6 h-6 object-contain transition-all duration-300 ${isActive ? '' : 'grayscale opacity-50'}`} 
+          referrerPolicy="no-referrer" 
+        />
+      )
     },
     {
       id: 'addmoney',
       label: 'Add Money',
-      icon: <Wallet className="w-6 h-6" />
+      renderIcon: () => <Wallet className="w-6 h-6" />
     },
     {
       id: 'orders',
       label: 'Orders',
-      icon: <ShoppingBag className="w-6 h-6" />
+      renderIcon: () => <ShoppingBag className="w-6 h-6" />
     },
     {
       id: 'support',
       label: 'Support',
-      icon: <HelpCircle className="w-6 h-6" />
+      renderIcon: () => <HelpCircle className="w-6 h-6" />
     },
     {
       id: 'profile',
       label: 'Profile',
-      icon: user ? (
+      renderIcon: () => user ? (
         <img 
           src={user.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=random&color=fff`} 
           alt="User" 
@@ -95,7 +102,7 @@ const BottomNav: React.FC<BottomNavProps> = ({ activeView, onNavigate, user }) =
                   : 'text-gray-400 group-hover:text-gray-800 group-hover:-translate-y-0.5 group-hover:scale-105'
               }`}
             >
-              {item.icon}
+              {item.renderIcon(isActive)}
             </div>
             
             {/* Label with fade/slide effect */}
