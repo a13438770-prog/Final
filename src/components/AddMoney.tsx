@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Wallet, CreditCard, PlayCircle, Info } from 'lucide-react';
+import { useToast } from "../context/ToastContext";
 
 interface AddMoneyProps {
   videoLink?: string;
@@ -10,6 +11,7 @@ interface AddMoneyProps {
 const AddMoney: React.FC<AddMoneyProps> = ({ videoLink, onProceed, onViewTransactions }) => {
   const [amount, setAmount] = useState<string>("");
   const [error, setError] = useState<string>("");
+  const { showToast } = useToast();
 
   const quickAmounts = [100, 500, 1000];
 
@@ -39,6 +41,7 @@ const AddMoney: React.FC<AddMoneyProps> = ({ videoLink, onProceed, onViewTransac
     const numAmount = parseFloat(amount);
     if (isNaN(numAmount) || numAmount < 10) {
       setError("Minimum deposit amount is ৳10");
+      showToast("Minimum deposit amount is ৳10", "error");
       return;
     }
     setError("");

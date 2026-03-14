@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { motion } from "motion/react";
 import { Search, ArrowLeft, Clock } from "lucide-react";
+import axios from "axios";
 
 export interface Transaction {
   id: number;
@@ -36,10 +37,9 @@ const Transactions: React.FC<TransactionsProps> = ({ onBack, onShopNow }) => {
       try {
         // Simulating API call for now, since it was fetching from /api/transactions
         // If there's no real API, we can just use empty array or mock data
-        const response = await fetch('/api/transactions');
-        if (response.ok) {
-          const data = await response.json();
-          setHistory(data);
+        const response = await axios.get('/api/transactions');
+        if (response.status === 200) {
+          setHistory(response.data);
         } else {
           // Fallback to mock data if API fails
           setHistory([

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Eye, EyeOff } from "lucide-react";
+import { useToast } from "../context/ToastContext";
 
 interface AuthProps {
   onLogin: (data: any) => void;
@@ -14,6 +15,8 @@ const Auth: React.FC<AuthProps> = ({ onLogin, onSignup, onForgotPassword, siteNa
   const [isLogin, setIsLogin] = useState(initialIsLogin);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [acceptTerms, setAcceptTerms] = useState(true);
+  const { showToast } = useToast();
 
   useEffect(() => {
     setIsLogin(initialIsLogin);
@@ -33,8 +36,40 @@ const Auth: React.FC<AuthProps> = ({ onLogin, onSignup, onForgotPassword, siteNa
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (isLogin) {
+      if (!formData.email) {
+        showToast("Email or Phone Number is required", "error");
+        return;
+      }
+      if (!formData.password) {
+        showToast("Password is required", "error");
+        return;
+      }
       onLogin({ email: formData.email, password: formData.password });
     } else {
+      if (!formData.name) {
+        showToast("Full Name is required", "error");
+        return;
+      }
+      if (!formData.phone) {
+        showToast("Phone Number is required", "error");
+        return;
+      }
+      if (!formData.email) {
+        showToast("Email Address is required", "error");
+        return;
+      }
+      if (!formData.password) {
+        showToast("Password is required", "error");
+        return;
+      }
+      if (formData.password !== formData.confirm_password) {
+        showToast("Passwords do not match", "error");
+        return;
+      }
+      if (!acceptTerms) {
+        showToast("You must accept the Terms & Conditions", "error");
+        return;
+      }
       onSignup(formData);
     }
   };
@@ -73,7 +108,7 @@ const Auth: React.FC<AuthProps> = ({ onLogin, onSignup, onForgotPassword, siteNa
                 />
               </div>
               
-              <div className="mb-6">
+              <div className="mb-2">
                 <div className="flex justify-between items-center mb-1.5">
                   <label className="label-text mb-0">Password</label>
                   <a 
@@ -190,7 +225,7 @@ const Auth: React.FC<AuthProps> = ({ onLogin, onSignup, onForgotPassword, siteNa
                 </div>
               </div>
               
-              <div className="mb-6">
+              <div className="mb-1.5">
                 <label className="label-text">Confirm Password</label>
                 <div className="relative">
                   <input 
@@ -210,6 +245,19 @@ const Auth: React.FC<AuthProps> = ({ onLogin, onSignup, onForgotPassword, siteNa
                     {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
                 </div>
+              </div>
+
+              <div className="mb-2 flex items-start gap-2">
+                <input 
+                  type="checkbox" 
+                  id="terms" 
+                  checked={acceptTerms}
+                  onChange={(e) => setAcceptTerms(e.target.checked)}
+                  className="mt-1 w-4 h-4 text-[#dc2626] border-gray-300 rounded focus:ring-[#dc2626] cursor-pointer"
+                />
+                <label htmlFor="terms" className="text-sm text-gray-600 cursor-pointer select-none">
+                  I accept the <a href="#" className="text-[#dc2626] hover:underline">Terms & Conditions</a>
+                </label>
               </div>
               
               <button type="submit" className="btn-main">Register</button>

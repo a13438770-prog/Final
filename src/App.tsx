@@ -8,6 +8,7 @@ import Orders, { OrderDetail } from "./components/Orders";
 import Profile, { UserStats } from "./components/Profile";
 import Auth from "./components/Auth";
 import ForgotPassword from "./components/ForgotPassword";
+import VerifyOTP from "./components/VerifyOTP";
 import ResetPassword from "./components/ResetPassword";
 import AddMoney from "./components/AddMoney";
 import Checkout from "./components/Checkout";
@@ -18,10 +19,10 @@ import BottomNav from "./components/BottomNav";
 import SupportButton from "./components/SupportButton";
 import DownloadPopup from "./components/DownloadPopup";
 import PageLoader from "./components/PageLoader";
-import NotificationModal, { NotifType } from "./components/NotificationModal";
 import Cart from "./components/Cart";
 import OrderTracker from "./components/OrderTracker";
 import Support from "./components/Support";
+import { useToast } from "./context/ToastContext";
 
 /**
  * Mock data for Header
@@ -127,13 +128,13 @@ const mockGames: Game[] = [
 ];
 
 const mockProducts: Product[] = [
-  { id: 1, name: "100 Diamonds", price: 85, status: 1 },
-  { id: 2, name: "210 Diamonds", price: 170, status: 1 },
-  { id: 3, name: "530 Diamonds", price: 420, status: 1 },
-  { id: 4, name: "1080 Diamonds", price: 840, status: 1 },
+  { id: 1, name: "100 Diamonds", price: 85, status: 1, badge: "HOT" },
+  { id: 2, name: "210 Diamonds", price: 170, status: 1, badge: "29%-" },
+  { id: 3, name: "530 Diamonds", price: 420, status: 1, badge: "POPULAR" },
+  { id: 4, name: "1080 Diamonds", price: 840, status: 1, badge: "LIMITED" },
   { id: 5, name: "2200 Diamonds", price: 1680, status: 1 },
   { id: 6, name: "Weekly Membership", price: 160, status: 1 },
-  { id: 7, name: "Monthly Membership", price: 800, status: 0 },
+  { id: 7, name: "Monthly Membership", price: 800, status: 0, badge: "STOCK OUT" },
 ];
 
 const mockLatestOrders: Order[] = [
@@ -145,7 +146,7 @@ const mockLatestOrders: Order[] = [
 ];
 
 const mockPopup: PopupData = {
-  image: "https://picsum.photos/seed/offer/400/300",
+  image: "https://picsum.photos/seed/offer/1920/1082",
   text: "Special Offer! Get 10% extra diamonds on your first purchase today.",
   btnText: "See Offer",
   link: "#",
@@ -251,7 +252,7 @@ const mockUserStats: UserStats = {
   total_orders: 42
 };
 
-type AppView = 'home' | 'transactions' | 'addmoney' | 'orders' | 'profile' | 'game_detail' | 'auth' | 'checkout' | 'forgot_password' | 'reset_password' | 'payment_verify' | 'cart' | 'order_tracker' | 'support';
+type AppView = 'home' | 'transactions' | 'addmoney' | 'orders' | 'profile' | 'game_detail' | 'auth' | 'checkout' | 'forgot_password' | 'verify_otp' | 'reset_password' | 'payment_verify' | 'cart' | 'order_tracker' | 'support';
 
 export interface CartItem {
   id: string;
@@ -303,6 +304,7 @@ export default function App() {
     if (path.startsWith('/game/')) return 'game_detail';
     if (path.startsWith('/payment_verify')) return 'payment_verify';
     if (path.startsWith('/forgot_password')) return 'forgot_password';
+    if (path.startsWith('/verify_otp')) return 'verify_otp';
     if (path.startsWith('/reset_password')) return 'reset_password';
     return path.substring(1) as AppView;
   };
@@ -315,19 +317,7 @@ export default function App() {
   const [checkoutAmount, setCheckoutAmount] = useState<number>(0);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string>('bkash');
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
-  
-  // Notification State
-  const [notif, setNotif] = useState<{
-    isOpen: boolean;
-    type: NotifType;
-    title: string;
-    message: string;
-  }>({
-    isOpen: false,
-    type: 'info',
-    title: '',
-    message: ''
-  });
+  const { showToast } = useToast();
 
   const handleNavigate = (newView: AppView, state?: any) => {
     if (newView === view) {
@@ -377,12 +367,7 @@ export default function App() {
       }];
     });
     
-    setNotif({
-      isOpen: true,
-      type: 'success',
-      title: 'Added to Cart',
-      message: `${data.productName} has been added to your cart.`
-    });
+    showToast(`${data.productName} has been added to your cart.`, 'success');
   };
 
   const updateCartQuantity = (id: string, quantity: number) => {
@@ -406,12 +391,7 @@ export default function App() {
   const handleLogout = () => {
     setIsLoggedIn(false);
     setIsSidebarOpen(false);
-    setNotif({
-      isOpen: true,
-      type: 'info',
-      title: 'Logged Out',
-      message: 'You have been successfully logged out.'
-    });
+    showToast('You have been successfully logged out.', 'info');
     handleNavigate('home');
   };
 
@@ -422,12 +402,7 @@ export default function App() {
 
   const handleAuthSuccess = () => {
     setIsLoggedIn(true);
-    setNotif({
-      isOpen: true,
-      type: 'success',
-      title: 'Success',
-      message: 'Welcome to TopupBD!'
-    });
+    showToast('Welcome to TopupBD!', 'success');
     handleNavigate('home');
   };
 
@@ -436,7 +411,7 @@ export default function App() {
       <ScrollToTop />
       <PageLoader isLoading={isLoading} />
       
-      {(view === 'home' || view === 'game_detail' || view === 'orders' || view === 'profile' || view === 'auth' || view === 'addmoney' || view === 'transactions' || view === 'forgot_password' || view === 'reset_password' || view === 'cart' || view === 'order_tracker' || view === 'support') && (
+      {(view === 'home' || view === 'game_detail' || view === 'orders' || view === 'profile' || view === 'auth' || view === 'addmoney' || view === 'transactions' || view === 'forgot_password' || view === 'verify_otp' || view === 'reset_password' || view === 'cart' || view === 'order_tracker' || view === 'support') && (
         <Header 
           siteInfo={mockSiteInfo} 
           user={isLoggedIn ? mockUser : null} 
@@ -476,14 +451,6 @@ export default function App() {
         user={isLoggedIn ? mockUser : null} 
       />
 
-      <NotificationModal 
-        isOpen={notif.isOpen}
-        type={notif.type}
-        title={notif.title}
-        message={notif.message}
-        onClose={() => setNotif({ ...notif, isOpen: false })}
-      />
-
       <main>
         <Routes>
           <Route path="/" element={
@@ -519,7 +486,7 @@ export default function App() {
                 onRefreshBalance={async () => mockUser.balance}
                 onPurchase={(data: any) => {
                   console.log("Purchase data:", data);
-                  setNotif({ isOpen: true, type: 'success', title: 'Order Placed', message: 'Your order has been placed successfully!' });
+                  showToast('Your order has been placed successfully!', 'success');
                   handleNavigate('home');
                 }}
                 onAddToCart={handleAddToCart}
@@ -579,7 +546,7 @@ export default function App() {
               initialMethod={selectedPaymentMethod}
               onBack={() => handleNavigate('checkout')}
               onSuccess={(trxId, amount) => {
-                setNotif({ isOpen: true, type: 'success', title: 'Payment Successful', message: `Successfully added ৳${amount} to your wallet. TrxID: ${trxId}` });
+                showToast(`Successfully added ৳${amount} to your wallet. TrxID: ${trxId}`, 'success');
                 handleNavigate('home');
               }}
             />
@@ -590,8 +557,21 @@ export default function App() {
               <ForgotPassword 
                 onBackToLogin={() => handleNavigate('auth')}
                 onSubmit={(email) => {
-                  setNotif({ isOpen: true, type: 'success', title: 'Email Sent', message: `A password reset link has been sent to ${email}.` });
-                  // Simulate redirecting to reset password for demo purposes
+                  showToast(`An OTP has been sent to ${email}.`, 'success');
+                  // Simulate redirecting to verify OTP for demo purposes
+                  setTimeout(() => handleNavigate('verify_otp'), 1500);
+                }}
+              />
+              <Footer logo={mockSiteInfo.logo} siteName={mockSiteInfo.name} socialLinks={mockSocialLinks} />
+            </>
+          } />
+
+          <Route path="/verify_otp" element={
+            <>
+              <VerifyOTP 
+                onBackToLogin={() => handleNavigate('auth')}
+                onSubmit={(otp) => {
+                  showToast('OTP verified successfully.', 'success');
                   setTimeout(() => handleNavigate('reset_password'), 1500);
                 }}
               />
@@ -604,7 +584,7 @@ export default function App() {
               <ResetPassword 
                 onBackToLogin={() => handleNavigate('auth')}
                 onSubmit={(password) => {
-                  setNotif({ isOpen: true, type: 'success', title: 'Password Reset', message: 'Your password has been successfully reset. You can now login.' });
+                  showToast('Your password has been successfully reset. You can now login.', 'success');
                   handleNavigate('auth');
                 }}
               />

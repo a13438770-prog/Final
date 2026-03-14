@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { motion } from "motion/react";
+import { useToast } from "../context/ToastContext";
 
 interface ResetPasswordProps {
   onBackToLogin: () => void;
@@ -14,6 +15,7 @@ const ResetPassword: React.FC<ResetPasswordProps> = ({ onBackToLogin, onSubmit }
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const { showToast } = useToast();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -24,10 +26,12 @@ const ResetPassword: React.FC<ResetPasswordProps> = ({ onBackToLogin, onSubmit }
     e.preventDefault();
     if (formData.password !== formData.confirm_password) {
       setError("Passwords do not match");
+      showToast("Passwords do not match", "error");
       return;
     }
     if (formData.password.length < 6) {
       setError("Password must be at least 6 characters");
+      showToast("Password must be at least 6 characters", "error");
       return;
     }
     onSubmit(formData.password);

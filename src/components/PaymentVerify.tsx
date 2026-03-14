@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useToast } from '../context/ToastContext';
 
 interface PaymentVerifyProps {
   amount: number;
@@ -19,20 +20,21 @@ const PaymentVerify: React.FC<PaymentVerifyProps> = ({ amount, initialMethod = '
   const [method, setMethod] = useState<PayMethod>((initialMethod as PayMethod) || 'bkash');
   const [trxId, setTrxId] = useState('');
   const [isVerifying, setIsVerifying] = useState(false);
-  const [popup, setPopup] = useState<{isOpen: boolean, type: 'success'|'error', title: string, msg: string} | null>(null);
   const [copied, setCopied] = useState(false);
+  const { showToast } = useToast();
 
   const data = paymentData[method];
 
   const handleCopy = (text: string) => {
     navigator.clipboard.writeText(text);
     setCopied(true);
+    showToast("Number copied to clipboard", "success");
     setTimeout(() => setCopied(false), 1500);
   };
 
   const handleVerify = () => {
     if (trxId.trim().length < 4) {
-      setPopup({ isOpen: true, type: 'error', title: 'INVALID FORMAT', msg: 'Please enter a valid Transaction ID.' });
+      showToast('Please enter a valid Transaction ID.', 'error');
       return;
     }
 
@@ -41,16 +43,8 @@ const PaymentVerify: React.FC<PaymentVerifyProps> = ({ amount, initialMethod = '
     // Simulate verification
     setTimeout(() => {
       setIsVerifying(false);
-      // Mock success
-      setPopup({ isOpen: true, type: 'success', title: 'PAYMENT SUCCESS', msg: `Verified! ${amount} Tk Added.` });
-    }, 2000);
-  };
-
-  const closePopup = () => {
-    if (popup?.type === 'success') {
       onSuccess(trxId, amount);
-    }
-    setPopup(null);
+    }, 2000);
   };
 
   return (
@@ -142,30 +136,6 @@ const PaymentVerify: React.FC<PaymentVerifyProps> = ({ amount, initialMethod = '
           </button>
         </div>
       </div>
-
-      {popup && popup.isOpen && (
-        <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black/50">
-          <div className="bg-white p-6 shadow-2xl relative rounded-none shadow-[0_0_0_1000px_rgba(0,0,0,0.8)] aspect-[3/2] flex flex-col justify-center items-center w-[90%] max-w-[340px]">
-            <div className="w-full flex flex-col items-center justify-center text-center">
-              <div className="text-5xl mb-4">
-                {popup.type === 'success' ? (
-                  <i className="fa-solid fa-circle-check text-green-500"></i>
-                ) : (
-                  <i className="fa-solid fa-circle-xmark text-red-500"></i>
-                )}
-              </div>
-              <h2 className="text-xl font-black mb-2 uppercase tracking-wide text-gray-900">{popup.title}</h2>
-              <p className="text-gray-600 text-xs mb-6 font-bold leading-relaxed px-4">{popup.msg}</p>
-              <button 
-                onClick={closePopup} 
-                className={`w-full py-3 text-white rounded-none uppercase tracking-[1px] font-black ${popup.type === 'success' ? 'bg-green-600' : 'bg-red-600'}`}
-              >
-                OK
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

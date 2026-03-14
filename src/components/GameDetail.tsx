@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
+import { useToast } from "../context/ToastContext";
+import axios from "axios";
 
 export interface Product {
   id: number;
   name: string;
   price: number;
   status: number;
+  badge?: string;
 }
 
 interface GameDetailProps {
@@ -61,6 +64,7 @@ const GameDetail: React.FC<GameDetailProps> = ({
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [quantity, setQuantity] = useState<number>(1);
   const [activeTab, setActiveTab] = useState<'description' | 'guide' | 'rules'>('description');
+  const { showToast } = useToast();
 
   const selectedProduct = products.find(p => p.id === selectedProductId);
   const gameType = game.type.toLowerCase().trim();
@@ -76,6 +80,7 @@ const GameDetail: React.FC<GameDetailProps> = ({
 
   const checkUidName = async () => {
     if (!playerId.trim()) {
+      showToast("দয়া করে প্রয়োজনীয় তথ্য দিন", "error");
       setErrors({ ...errors, playerId: "দয়া করে প্রয়োজনীয় তথ্য দিন" });
       return;
     }
@@ -86,8 +91,8 @@ const GameDetail: React.FC<GameDetailProps> = ({
     try {
       // Mocking the API call as we don't have the backend endpoint here
       // In a real app, this would be a fetch to the PHP endpoint or a direct API call
-      const response = await fetch(`https://bhauxinfo2.vercel.app/bhau?uid=${playerId}&region=BD`);
-      const data = await response.json();
+      const response = await axios.get(`https://bhauxinfo2.vercel.app/bhau?uid=${playerId}&region=BD`);
+      const data = response.data;
       
       if (data.basicInfo?.nickname) {
         setCheckedName(data.basicInfo.nickname);
@@ -108,14 +113,13 @@ const GameDetail: React.FC<GameDetailProps> = ({
     
     if (!selectedProductId) {
       newErrors.product = "অনুগ্রহ করে একটি প্যাকেজ সিলেক্ট করুন";
-    }
-
-    if (!isVoucher && !playerId.trim()) {
+      showToast("অনুগ্রহ করে একটি প্যাকেজ সিলেক্ট করুন", "error");
+    } else if (!isVoucher && !playerId.trim()) {
       newErrors.playerId = "দয়া করে প্রয়োজনীয় তথ্য দিন";
-    }
-
-    if (paymentMethod === 'wallet' && selectedProduct && userBalance < totalPrice) {
+      showToast("দয়া করে প্রয়োজনীয় তথ্য দিন", "error");
+    } else if (paymentMethod === 'wallet' && selectedProduct && userBalance < totalPrice) {
       newErrors.balance = "আপনার ওয়ালেটে পর্যাপ্ত ব্যালেন্স নেই!";
+      showToast("আপনার ওয়ালেটে পর্যাপ্ত ব্যালেন্স নেই!", "error");
     }
 
     setErrors(newErrors);
@@ -129,8 +133,13 @@ const GameDetail: React.FC<GameDetailProps> = ({
     }
 
     const newErrors: { [key: string]: string } = {};
-    if (!selectedProductId) newErrors.product = "Please select a package";
-    if (!isVoucher && !playerId.trim()) newErrors.playerId = "Player ID is required";
+    if (!selectedProductId) {
+      newErrors.product = "Please select a package";
+      showToast("Please select a package", "error");
+    } else if (!isVoucher && !playerId.trim()) {
+      newErrors.playerId = "Player ID is required";
+      showToast("Player ID is required", "error");
+    }
     
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -231,11 +240,13 @@ const GameDetail: React.FC<GameDetailProps> = ({
             </a>
           </div>
           
-          <div className="grid grid-cols-2 gap-2.5">
+          <div className="grid grid-cols-2 gap-x-1.5 gap-y-1 pt-2">
             {products.map((prod) => {
               const isActive = prod.status === 1;
+              const badgeText = prod.badge || (!isActive ? 'STOCK OUT' : null);
+              
               return (
-                <label key={prod.id} className={`${isActive ? 'cursor-pointer' : 'cursor-not-allowed'} relative group select-none`}>
+                <label key={prod.id} className={`${isActive ? 'cursor-pointer' : 'cursor-not-allowed'} relative group select-none flex flex-col h-full pt-2`}>
                   <input 
                     type="radio" 
                     name="product_id" 
@@ -246,21 +257,29 @@ const GameDetail: React.FC<GameDetailProps> = ({
                     disabled={!isActive}
                   />
                   
-                  <div className="pkg-card p-1.5 h-full flex flex-col justify-center items-center relative">
+                  {badgeText && (
+                    <div className={`absolute top-0 left-2.5 w-fit max-w-[calc(100%-20px)] overflow-hidden text-ellipsis text-white text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider z-30 shadow-sm whitespace-nowrap leading-tight ${
+                      badgeText.toLowerCase() === 'stock out' ? 'bg-gray-500' : 'bg-[#dc2626]'
+                    }`}>
+                      {badgeText}
+                    </div>
+                  )}
+                  
+                  <div className="pkg-card py-1.5 px-1.5 flex-1 w-full flex flex-col justify-center items-center relative">
                     {selectedProductId === prod.id && (
-                      <div className="absolute left-2 top-1/2 -translate-y-1/2 text-[#dc2626] text-sm z-10">
+                      <div className="absolute right-1.5 top-1/2 -translate-y-1/2 text-[#dc2626] text-sm z-10">
                         <i className="fa-solid fa-circle-check"></i>
                       </div>
                     )}
-                    <span className="pkg-title font-bree text-center block px-4">
+                    <span className="pkg-title font-bree text-center block px-4 pt-0.5 leading-tight">
                       {prod.name}
                     </span>
-                    <span className="pkg-price font-bree text-[11px]">
+                    <span className="pkg-price font-bree text-[11px] mt-0.5">
                       BDT {prod.price.toLocaleString()}
                     </span>
                     
                     {!isActive && (
-                      <div className="absolute inset-0 z-20 cursor-not-allowed bg-white/50"></div>
+                      <div className="absolute inset-0 z-20 cursor-not-allowed bg-white/50 rounded-lg"></div>
                     )}
                   </div>
                 </label>

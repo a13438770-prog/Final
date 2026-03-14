@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from "react";
 import { motion } from "motion/react";
 import { Search, Copy, CheckCircle, ExternalLink, ArrowLeft, ShoppingBag } from "lucide-react";
+import { useToast } from "../context/ToastContext";
 
 export interface OrderDetail {
   id: number;
@@ -31,6 +32,7 @@ const Orders: React.FC<OrdersProps> = ({ orders, onBack, onPayNow }) => {
   const [activeTab, setActiveTab] = useState("All");
   const [currentPage, setCurrentPage] = useState(1);
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
+  const { showToast } = useToast();
 
   const getStatusClass = (status: string) => {
     switch (status.toLowerCase()) {
@@ -44,6 +46,7 @@ const Orders: React.FC<OrdersProps> = ({ orders, onBack, onPayNow }) => {
   const handleCopy = (text: string) => {
     navigator.clipboard.writeText(text);
     setCopiedCode(text);
+    showToast("Code copied to clipboard", "success");
     setTimeout(() => setCopiedCode(null), 2000);
   };
 
@@ -51,6 +54,7 @@ const Orders: React.FC<OrdersProps> = ({ orders, onBack, onPayNow }) => {
     const text = codes.join('\n');
     navigator.clipboard.writeText(text);
     setCopiedCode('all');
+    showToast("All codes copied to clipboard", "success");
     setTimeout(() => setCopiedCode(null), 2000);
   };
 

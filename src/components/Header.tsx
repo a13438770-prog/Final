@@ -42,13 +42,13 @@ const BalancePill: React.FC<{ balance: number, onClick?: () => void }> = ({ bala
   const balStr = balance.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 });
   const digits = balStr.replace(/,/g, '').length;
   
-  let fontSize = '15px';
-  if (digits > 4) fontSize = '13px';
-  if (digits > 6) fontSize = '11px';
+  let fontSize = '13px';
+  if (digits > 4) fontSize = '11px';
+  if (digits > 6) fontSize = '9px';
 
   return (
     <div className="secure-balance-box cursor-pointer" onClick={onClick} style={{ fontSize: `${fontSize} !important` } as React.CSSProperties}>
-      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="opacity-90">
+      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="opacity-90">
         <path d="M21 12V7H5a2 2 0 0 1 0-4h14v4" />
         <path d="M3 5v14a2 2 0 0 0 2 2h16v-5" />
         <path d="M18 12a2 2 0 0 0 0 4h4v-4Z" />
@@ -88,7 +88,7 @@ const Header: React.FC<HeaderProps> = ({ siteInfo, user, isSidebarOpen, onToggle
           </a>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-1">
           {user ? (
             <>
               <BalancePill balance={user.balance} onClick={onBalanceClick} />

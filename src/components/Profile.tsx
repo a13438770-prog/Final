@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { User as UserType } from "./Header";
 import { User, Wallet, ShoppingBag, CreditCard, Shield, Calendar, Clock, LayoutGrid, CheckCircle, Camera, Lock, Save, X, LogOut, MapPin } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useToast } from "../context/ToastContext";
 
 export interface UserStats {
   support_pin: number;
@@ -20,6 +21,7 @@ interface ProfileProps {
 
 const Profile: React.FC<ProfileProps> = ({ user, stats, onRefresh, onLogout }) => {
   const navigate = useNavigate();
+  const { showToast } = useToast();
   const [isEditing, setIsEditing] = useState(false);
   const [editForm, setEditForm] = useState({
     name: user.name,
@@ -53,8 +55,22 @@ const Profile: React.FC<ProfileProps> = ({ user, stats, onRefresh, onLogout }) =
   };
 
   const handleSave = () => {
+    if (!editForm.name) {
+      showToast("Name is required", "error");
+      return;
+    }
+    if (!editForm.email) {
+      showToast("Email is required", "error");
+      return;
+    }
+    if (editForm.newPassword && editForm.newPassword !== editForm.confirmPassword) {
+      showToast("New passwords do not match", "error");
+      return;
+    }
+    
     // Here you would typically make an API call to save the changes
     console.log("Saving changes:", editForm);
+    showToast("Profile updated successfully", "success");
     if (editForm.email !== user.email) {
       setIsEmailVerified(false);
     }
@@ -66,7 +82,7 @@ const Profile: React.FC<ProfileProps> = ({ user, stats, onRefresh, onLogout }) =
     // Simulate API call for sending verification email
     setTimeout(() => {
       setIsVerifying(false);
-      alert("Verification email sent! Please check your inbox.");
+      showToast("Verification email sent! Please check your inbox.", "success");
       // In a real app, this would be set to true after the user clicks the link in their email
       setIsEmailVerified(true); 
     }, 1500);

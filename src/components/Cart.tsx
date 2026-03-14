@@ -2,6 +2,7 @@ import React from 'react';
 import { ArrowLeft, Trash2, ShoppingCart } from 'lucide-react';
 
 import { CartItem } from '../App';
+import { useToast } from '../context/ToastContext';
 
 interface CartProps {
   cartItems: CartItem[];
@@ -13,6 +14,12 @@ interface CartProps {
 
 const Cart: React.FC<CartProps> = ({ cartItems, onUpdateQuantity, onRemoveItem, onBack, onCheckout }) => {
   const total = cartItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+  const { showToast } = useToast();
+
+  const handleRemove = (id: string) => {
+    onRemoveItem(id);
+    showToast("Item removed from cart", "info");
+  };
 
   return (
     <div className="min-h-screen bg-[#f0f5f9] pb-20 pt-4">
@@ -58,7 +65,7 @@ const Cart: React.FC<CartProps> = ({ cartItems, onUpdateQuantity, onRemoveItem, 
                         >+</button>
                       </div>
                       <button 
-                        onClick={() => onRemoveItem(item.id)}
+                        onClick={() => handleRemove(item.id)}
                         className="w-8 h-8 flex items-center justify-center rounded-lg bg-red-50 text-red-500 hover:bg-red-100 hover:text-red-600 transition-colors border border-red-100"
                       >
                         <Trash2 className="w-4 h-4" />

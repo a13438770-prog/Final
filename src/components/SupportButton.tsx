@@ -29,10 +29,10 @@ const SupportButton: React.FC<SupportButtonProps> = ({ socialLinks, onNavigateTo
   if (isKeyboardOpen) return null;
 
   return (
-    <div className="fixed bottom-[75px] right-4 z-[9998] flex flex-col items-end gap-3 transition-all duration-300 md:bottom-[70px] md:right-10">
+    <div className="fixed bottom-[75px] right-4 z-[9998] flex flex-col items-center gap-2 transition-all duration-300 md:bottom-[70px] md:right-10">
       {/* Support Options */}
       <div 
-        className={`flex flex-col gap-3 transition-all duration-300 origin-bottom ${
+        className={`flex flex-col items-center gap-1.5 transition-all duration-300 origin-bottom ${
           isOpen ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-50 translate-y-10 pointer-events-none'
         }`}
       >
@@ -41,7 +41,7 @@ const SupportButton: React.FC<SupportButtonProps> = ({ socialLinks, onNavigateTo
             href={`https://wa.me/${socialLinks.helpline}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="w-12 h-12 bg-[#25D366] rounded-full shadow-lg flex items-center justify-center text-white text-2xl transition-transform hover:scale-110 active:scale-95"
+            className="w-9 h-9 bg-[#25D366] rounded-full shadow-lg flex items-center justify-center text-white text-lg transition-transform hover:scale-110 active:scale-95"
             title="WhatsApp"
           >
             <i className="fa-brands fa-whatsapp"></i>
@@ -53,7 +53,7 @@ const SupportButton: React.FC<SupportButtonProps> = ({ socialLinks, onNavigateTo
             href={socialLinks.telegram}
             target="_blank"
             rel="noopener noreferrer"
-            className="w-12 h-12 bg-[#0088cc] rounded-full shadow-lg flex items-center justify-center text-white text-2xl transition-transform hover:scale-110 active:scale-95"
+            className="w-9 h-9 bg-[#0088cc] rounded-full shadow-lg flex items-center justify-center text-white text-lg transition-transform hover:scale-110 active:scale-95"
             title="Telegram"
           >
             <i className="fa-brands fa-telegram"></i>
@@ -65,24 +65,11 @@ const SupportButton: React.FC<SupportButtonProps> = ({ socialLinks, onNavigateTo
             href={socialLinks.facebook}
             target="_blank"
             rel="noopener noreferrer"
-            className="w-12 h-12 bg-[#00B2FF] rounded-full shadow-lg flex items-center justify-center text-white text-2xl transition-transform hover:scale-110 active:scale-95"
+            className="w-9 h-9 bg-[#00B2FF] rounded-full shadow-lg flex items-center justify-center text-white text-lg transition-transform hover:scale-110 active:scale-95"
             title="Messenger"
           >
             <i className="fa-brands fa-facebook-messenger"></i>
           </a>
-        )}
-        
-        {onNavigateToSupport && (
-          <button
-            onClick={() => {
-              setIsOpen(false);
-              onNavigateToSupport();
-            }}
-            className="w-12 h-12 bg-gray-800 rounded-full shadow-lg flex items-center justify-center text-white text-2xl transition-transform hover:scale-110 active:scale-95"
-            title="Support Center"
-          >
-            <HelpCircle className="w-6 h-6" />
-          </button>
         )}
       </div>
 

@@ -66,13 +66,13 @@ body {
   color: #ffffff !important;
   border: 1px solid #ffffff !important;
   border-radius: 50px !important; 
-  height: 38px !important; 
-  padding: 0 8px !important; 
+  height: 28px !important; 
+  padding: 0 6px !important; 
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  gap: 6px !important; 
-  min-width: 60px !important;
+  gap: 3px !important; 
+  min-width: 40px !important;
   text-decoration: none !important;
   box-shadow: 0 2px 4px rgba(var(--primary-rgb), 0.3) !important; 
 }
@@ -200,14 +200,18 @@ body {
   border-radius: 8px;
   box-shadow: 0 1px 2px rgba(0,0,0,0.05);
   transition: all 0.2s;
-  min-height: 48px; 
   position: relative; 
 }
 
-.pkg-radio:checked + .pkg-card {
+.pkg-radio:checked ~ .pkg-card {
   border-color: var(--primary-color);
   background-color: #fff1f2; 
   box-shadow: 0 0 0 1px var(--primary-color);
+}
+.pkg-radio:disabled ~ .pkg-card {
+  opacity: 0.6;
+  background-color: #f9fafb;
+  cursor: not-allowed;
 }
 .pkg-title { color: #1f2937; font-weight: 700; font-size: 13px; line-height: 1.2; }
 .pkg-price { color: var(--primary-color); font-weight: 600; font-size: 12px; margin-top: 2px; }
@@ -656,19 +660,19 @@ body {
   overflow: hidden;
   position: relative;
   box-shadow: none !important;
-  padding-bottom: 30px;
+  padding-bottom: 15px;
 }
 
 .popup-img-box { width: 100%; background: #000; }
-.popup-img-box img { display: block; width: 100%; height: auto; max-height: 250px; object-fit: cover; }
+.popup-img-box img { display: block; width: 100%; height: auto; object-fit: cover; }
 
-.popup-body { padding: 20px 20px 0px 20px; text-align: center; }
+.popup-body { padding: 8px 20px 0px 20px; text-align: center; }
 
 .popup-text-content {
   font-size: 14px;
   color: #333;
   line-height: 1.5;
-  margin-bottom: 15px;
+  margin-bottom: 5px;
   font-family: var(--font-lato), var(--font-noto-bengali), sans-serif;
 }
 
@@ -693,8 +697,8 @@ body {
   transform: translateX(-50%);
   background: var(--primary-color);
   color: white;
-  border: 2px solid #fff;
-  padding: 8px 30px;
+  border: none;
+  padding: 8px 20px;
   border-radius: 50px;
   font-weight: 900;
   font-size: 14px;

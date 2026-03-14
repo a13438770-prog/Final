@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Search, ChevronDown, Copy, CheckCircle, Mail, AlertTriangle, Send, PlayCircle, ExternalLink, HelpCircle } from 'lucide-react';
+import { useToast } from '../context/ToastContext';
 
 interface SupportProps {
   onBack: () => void;
@@ -62,6 +63,7 @@ const Support: React.FC<SupportProps> = ({ onBack, socialLinks }) => {
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
+  const { showToast } = useToast();
 
   const supportEmail = socialLinks.email || "support@riyalgames.online";
 
@@ -73,6 +75,7 @@ const Support: React.FC<SupportProps> = ({ onBack, socialLinks }) => {
   const handleCopyEmail = () => {
     navigator.clipboard.writeText(supportEmail);
     setCopiedEmail(true);
+    showToast("Email address copied", "success");
     setTimeout(() => setCopiedEmail(false), 2000);
   };
 
@@ -97,6 +100,9 @@ const Support: React.FC<SupportProps> = ({ onBack, socialLinks }) => {
     if (!formData.message.trim()) errors.message = "Message is required";
     
     setFormErrors(errors);
+    if (Object.keys(errors).length > 0) {
+      showToast("Please fix the errors in the form", "error");
+    }
     return Object.keys(errors).length === 0;
   };
 
@@ -111,9 +117,11 @@ const Support: React.FC<SupportProps> = ({ onBack, socialLinks }) => {
       await new Promise(resolve => setTimeout(resolve, 1500));
       setSubmitSuccess(true);
       setFormData({ name: '', email: '', orderId: '', category: '', message: '' });
+      showToast("Support request submitted successfully", "success");
       setTimeout(() => setSubmitSuccess(false), 5000);
     } catch (error) {
       console.error("Failed to submit support request", error);
+      showToast("Failed to submit support request", "error");
     } finally {
       setIsSubmitting(false);
     }

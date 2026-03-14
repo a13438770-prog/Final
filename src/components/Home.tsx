@@ -84,12 +84,12 @@ const Popup: React.FC<{ data: PopupData }> = ({ data }) => {
           </button>
 
           {data.image && (
-            <div className="popup-img-box w-full aspect-video">
-              <img src={data.image} alt="Offer" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+            <div className="popup-img-box w-full aspect-[1920/1082]">
+              <img src={data.image} alt="Offer" width="1920" height="1082" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
             </div>
           )}
 
-          <div className="popup-body pb-6">
+          <div className="popup-body pb-3">
             {data.text && (
               <div className="popup-text-content whitespace-pre-wrap">
                 {data.text}
@@ -350,19 +350,19 @@ const GameCard: React.FC<{ game: Game; onClick?: (id: number) => void }> = ({ ga
       onMouseLeave={endHover}
       onTouchStart={startHover}
       onTouchMove={cancelHover}
-      className="block text-left cursor-pointer focus:outline-none w-full"
+      className="block text-left cursor-pointer focus:outline-none w-full group"
     >
-      <div className={`rounded-md overflow-hidden mb-2 relative bg-white shadow-sm border border-gray-200 transition-transform duration-300 ${isActive ? 'scale-[0.87]' : 'scale-100'}`}>
+      <div className="rounded-md overflow-hidden mb-2 relative bg-white shadow-sm border border-gray-200">
         <img 
           src={game.image} 
-          className="w-full aspect-square object-cover" 
+          className={`w-full aspect-square object-cover transition-transform duration-300 ${isActive ? 'scale-110' : 'scale-100'} group-hover:scale-110`} 
           alt={game.name}
           referrerPolicy="no-referrer"
         />
       </div>
       
       <div className="text-center">
-        <h3 className={`text-xs md:text-sm font-bold leading-tight uppercase transition-colors duration-300 ${isActive ? 'text-[var(--primary-color)]' : 'text-black'}`}>
+        <h3 className={`text-xs md:text-sm font-bold leading-tight uppercase transition-all duration-300 ${isActive ? 'text-[var(--primary-color)] scale-105 transform' : 'text-gray-800'} group-hover:text-[var(--primary-color)] group-hover:scale-105 transform inline-block`}>
           {game.name}
         </h3>
       </div>

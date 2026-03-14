@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { ArrowLeft, Search, Package, CheckCircle2, Clock, Truck, MapPin } from 'lucide-react';
+import { useToast } from '../context/ToastContext';
 
 interface OrderTrackerProps {
   onBack: () => void;
@@ -9,11 +10,17 @@ const OrderTracker: React.FC<OrderTrackerProps> = ({ onBack }) => {
   const [orderId, setOrderId] = useState('');
   const [isSearching, setIsSearching] = useState(false);
   const [trackedOrder, setTrackedOrder] = useState<any>(null);
+  const [error, setError] = useState('');
+  const { showToast } = useToast();
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!orderId.trim()) return;
+    if (!orderId.trim()) {
+      setError('Order ID cannot be empty.');
+      return;
+    }
     
+    setError('');
     setIsSearching(true);
     // Mock API call
     setTimeout(() => {
@@ -25,6 +32,7 @@ const OrderTracker: React.FC<OrderTrackerProps> = ({ onBack }) => {
         total: 85
       });
       setIsSearching(false);
+      showToast("Order found", "success");
     }, 1000);
   };
 
@@ -54,24 +62,30 @@ const OrderTracker: React.FC<OrderTrackerProps> = ({ onBack }) => {
           </h2>
           <p className="text-sm text-gray-500 mb-4">Enter your Order ID below to check the current status of your top-up.</p>
           
-          <form onSubmit={handleSearch} className="flex gap-2">
-            <div className="relative flex-1">
-              <input
-                type="text"
-                value={orderId}
-                onChange={(e) => setOrderId(e.target.value)}
-                placeholder="e.g. ORD-123456"
-                className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 pl-10 text-sm focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all font-bree"
-              />
-              <Search className="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+          <form onSubmit={handleSearch} className="flex flex-col gap-2">
+            <div className="flex gap-2">
+              <div className="relative flex-1">
+                <input
+                  type="text"
+                  value={orderId}
+                  onChange={(e) => {
+                    setOrderId(e.target.value);
+                    if (error) setError('');
+                  }}
+                  placeholder="e.g. ORD-123456"
+                  className={`w-full bg-gray-50 border ${error ? 'border-red-500' : 'border-gray-200'} rounded-lg px-4 py-3 pl-10 text-sm focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all font-bree`}
+                />
+                <Search className="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+              </div>
+              <button 
+                type="submit"
+                disabled={isSearching}
+                className="bg-[#dc2626] hover:bg-red-700 disabled:bg-red-400 text-white px-5 rounded-lg font-bree text-sm transition-colors flex items-center justify-center min-w-[100px] shadow-sm"
+              >
+                {isSearching ? <i className="fa-solid fa-spinner fa-spin"></i> : 'Track'}
+              </button>
             </div>
-            <button 
-              type="submit"
-              disabled={isSearching || !orderId.trim()}
-              className="bg-[#dc2626] hover:bg-red-700 disabled:bg-red-400 text-white px-5 rounded-lg font-bree text-sm transition-colors flex items-center justify-center min-w-[100px] shadow-sm"
-            >
-              {isSearching ? <i className="fa-solid fa-spinner fa-spin"></i> : 'Track'}
-            </button>
+            {error && <p className="text-red-500 text-xs pl-1">{error}</p>}
           </form>
         </div>
 

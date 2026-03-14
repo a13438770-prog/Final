@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { motion } from "motion/react";
+import { useToast } from "../context/ToastContext";
 
 interface ForgotPasswordProps {
   onBackToLogin: () => void;
@@ -8,9 +9,14 @@ interface ForgotPasswordProps {
 
 const ForgotPassword: React.FC<ForgotPasswordProps> = ({ onBackToLogin, onSubmit }) => {
   const [email, setEmail] = useState("");
+  const { showToast } = useToast();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!email) {
+      showToast("Email Address is required", "error");
+      return;
+    }
     onSubmit(email);
   };
 
