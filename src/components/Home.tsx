@@ -292,7 +292,7 @@ const Slider: React.FC<{ slides: Slide[] }> = ({ slides }) => {
 /**
  * Game Card Component
  */
-const GameCard: React.FC<{ game: Game; onClick?: (id: number) => void }> = ({ game, onClick }) => {
+export const GameCard: React.FC<{ game: Game; onClick?: (id: number) => void }> = ({ game, onClick }) => {
   const [isActive, setIsActive] = useState(false);
   const cardRef = useRef<HTMLButtonElement>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);

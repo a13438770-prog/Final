@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Routes, Route, useNavigate, useLocation, useParams, Navigate } from "react-router-dom";
 import Header, { SiteInfo, User } from "./components/Header";
 import Home, { Slide, Category, Game, Order, PopupData } from "./components/Home";
+import Store from "./components/Store";
 import Transactions, { Transaction } from "./components/Transactions";
 import GameDetail, { Product } from "./components/GameDetail";
 import Orders, { OrderDetail } from "./components/Orders";
@@ -252,7 +253,7 @@ const mockUserStats: UserStats = {
   total_orders: 42
 };
 
-type AppView = 'home' | 'transactions' | 'addmoney' | 'orders' | 'profile' | 'game_detail' | 'auth' | 'checkout' | 'forgot_password' | 'verify_otp' | 'reset_password' | 'payment_verify' | 'cart' | 'order_tracker' | 'support';
+type AppView = 'home' | 'store' | 'transactions' | 'addmoney' | 'orders' | 'profile' | 'game_detail' | 'auth' | 'checkout' | 'forgot_password' | 'verify_otp' | 'reset_password' | 'payment_verify' | 'cart' | 'order_tracker' | 'support';
 
 export interface CartItem {
   id: string;
@@ -301,6 +302,7 @@ export default function App() {
   const getViewFromPath = (): AppView => {
     const path = location.pathname;
     if (path === '/') return 'home';
+    if (path === '/store') return 'store';
     if (path.startsWith('/game/')) return 'game_detail';
     if (path.startsWith('/payment_verify')) return 'payment_verify';
     if (path.startsWith('/forgot_password')) return 'forgot_password';
@@ -411,7 +413,7 @@ export default function App() {
       <ScrollToTop />
       <PageLoader isLoading={isLoading} />
       
-      {(view === 'home' || view === 'game_detail' || view === 'orders' || view === 'profile' || view === 'auth' || view === 'addmoney' || view === 'transactions' || view === 'forgot_password' || view === 'verify_otp' || view === 'reset_password' || view === 'cart' || view === 'order_tracker' || view === 'support') && (
+      {(view === 'home' || view === 'store' || view === 'game_detail' || view === 'orders' || view === 'profile' || view === 'auth' || view === 'addmoney' || view === 'transactions' || view === 'forgot_password' || view === 'verify_otp' || view === 'reset_password' || view === 'cart' || view === 'order_tracker' || view === 'support') && (
         <Header 
           siteInfo={mockSiteInfo} 
           user={isLoggedIn ? mockUser : null} 
@@ -471,6 +473,17 @@ export default function App() {
           <Route path="/transactions" element={
             <>
               <Transactions onBack={() => handleNavigate('home')} onShopNow={() => handleNavigate('home')} />
+              <Footer logo={mockSiteInfo.logo} siteName={mockSiteInfo.name} socialLinks={mockSocialLinks} />
+            </>
+          } />
+          
+          <Route path="/store" element={
+            <>
+              <Store 
+                games={mockGames} 
+                categories={mockCategories} 
+                onGameClick={(id) => handleNavigate('game_detail', { id })} 
+              />
               <Footer logo={mockSiteInfo.logo} siteName={mockSiteInfo.name} socialLinks={mockSocialLinks} />
             </>
           } />

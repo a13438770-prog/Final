@@ -24,11 +24,16 @@ const OrderTracker: React.FC<OrderTrackerProps> = ({ onBack }) => {
     setIsSearching(true);
     // Mock API call
     setTimeout(() => {
+      const isCompleted = orderId.toLowerCase().includes('comp') || orderId === '123456';
       setTrackedOrder({
         id: orderId,
-        status: 'processing',
+        status: isCompleted ? 'completed' : 'processing',
         date: new Date().toLocaleDateString(),
-        items: ['Free Fire 100 Diamonds'],
+        gameName: 'Free Fire',
+        variationName: '100 Diamonds',
+        quantity: 1,
+        placedTime: new Date(Date.now() - 3600000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        completedTime: isCompleted ? new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : null,
         total: 85
       });
       setIsSearching(false);
@@ -102,9 +107,36 @@ const OrderTracker: React.FC<OrderTrackerProps> = ({ onBack }) => {
                   <p className="text-xs text-gray-500 mt-0.5">{trackedOrder.date}</p>
                 </div>
               </div>
-              <span className="bg-blue-50 text-blue-600 px-3 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider border border-blue-100">
+              <span className={`px-3 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider border ${
+                trackedOrder.status === 'completed' 
+                  ? 'bg-green-50 text-green-600 border-green-100' 
+                  : 'bg-blue-50 text-blue-600 border-blue-100'
+              }`}>
                 {trackedOrder.status}
               </span>
+            </div>
+
+            {/* Order Details */}
+            <div className="bg-gray-50 rounded-xl p-4 mb-6 border border-gray-100">
+              <h4 className="font-bold text-gray-900 text-sm mb-3 font-bree border-b border-gray-200 pb-2">Order Details</h4>
+              <div className="grid grid-cols-2 gap-y-3 gap-x-4 text-sm">
+                <div>
+                  <p className="text-xs text-gray-500 mb-0.5">Product</p>
+                  <p className="font-bold text-gray-900">{trackedOrder.gameName}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500 mb-0.5">Variation</p>
+                  <p className="font-bold text-gray-900">{trackedOrder.variationName}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500 mb-0.5">Quantity</p>
+                  <p className="font-bold text-gray-900">{trackedOrder.quantity}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500 mb-0.5">Total Amount</p>
+                  <p className="font-bold text-red-600">৳{trackedOrder.total}</p>
+                </div>
+              </div>
             </div>
 
             {/* Timeline */}
@@ -117,7 +149,10 @@ const OrderTracker: React.FC<OrderTrackerProps> = ({ onBack }) => {
                 </div>
                 <div className="w-[calc(100%-2rem)] md:w-[calc(50%-2.5rem)]">
                   <div className="flex flex-col bg-gray-50 p-3 rounded-lg border border-gray-100">
-                    <h4 className="font-bold text-gray-900 text-sm font-bree">Order Placed</h4>
+                    <div className="flex justify-between items-start">
+                      <h4 className="font-bold text-gray-900 text-sm font-bree">Order Placed</h4>
+                      {trackedOrder.placedTime && <span className="text-xs font-bold text-gray-500">{trackedOrder.placedTime}</span>}
+                    </div>
                     <span className="text-xs text-gray-500 mt-0.5">We have received your order</span>
                   </div>
                 </div>
@@ -138,13 +173,16 @@ const OrderTracker: React.FC<OrderTrackerProps> = ({ onBack }) => {
 
               {/* Step 3 */}
               <div className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group">
-                <div className="flex items-center justify-center w-6 h-6 rounded-full border-2 border-white bg-gray-200 text-gray-400 shadow-sm shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 absolute -left-6">
+                <div className={`flex items-center justify-center w-6 h-6 rounded-full border-2 border-white ${trackedOrder.status === 'completed' ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-400'} shadow-sm shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 absolute -left-6`}>
                   <Package className="w-3 h-3" />
                 </div>
                 <div className="w-[calc(100%-2rem)] md:w-[calc(50%-2.5rem)]">
-                  <div className="flex flex-col bg-gray-50 p-3 rounded-lg border border-gray-100 opacity-60">
-                    <h4 className="font-bold text-gray-500 text-sm font-bree">Completed</h4>
-                    <span className="text-xs text-gray-400 mt-0.5">Top-up delivered successfully</span>
+                  <div className={`flex flex-col ${trackedOrder.status === 'completed' ? 'bg-green-50 border-green-100' : 'bg-gray-50 border-gray-100 opacity-60'} p-3 rounded-lg border`}>
+                    <div className="flex justify-between items-start">
+                      <h4 className={`font-bold ${trackedOrder.status === 'completed' ? 'text-green-900' : 'text-gray-500'} text-sm font-bree`}>Completed</h4>
+                      {trackedOrder.completedTime && <span className="text-xs font-bold text-green-700">{trackedOrder.completedTime}</span>}
+                    </div>
+                    <span className={`text-xs ${trackedOrder.status === 'completed' ? 'text-green-700' : 'text-gray-400'} mt-0.5`}>Top-up delivered successfully</span>
                   </div>
                 </div>
               </div>

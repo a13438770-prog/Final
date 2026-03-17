@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import { motion } from "motion/react";
-import { Search, ArrowLeft, Clock } from "lucide-react";
+import { Search, ArrowLeft, Clock, ChevronDown } from "lucide-react";
 import axios from "axios";
 
 export interface Transaction {
@@ -31,6 +31,19 @@ const Transactions: React.FC<TransactionsProps> = ({ onBack, onShopNow }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState("All");
   const [currentPage, setCurrentPage] = useState(1);
+  const [isAllDropdownOpen, setIsAllDropdownOpen] = useState(false);
+  const [allFilterType, setAllFilterType] = useState<'all' | 'wallet' | 'instant_pay'>('all');
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsAllDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   useEffect(() => {
     const fetchTransactions = async () => {
@@ -121,9 +134,18 @@ const Transactions: React.FC<TransactionsProps> = ({ onBack, onShopNow }) => {
       
       const matchesTab = activeTab === 'All' || t.status.toLowerCase() === activeTab.toLowerCase();
       
-      return matchesSearch && matchesTab;
+      let matchesAllFilter = true;
+      if (activeTab === 'All') {
+        if (allFilterType === 'wallet') {
+          matchesAllFilter = method.toLowerCase() === 'wallet';
+        } else if (allFilterType === 'instant_pay') {
+          matchesAllFilter = method.toLowerCase() !== 'wallet';
+        }
+      }
+      
+      return matchesSearch && matchesTab && matchesAllFilter;
     });
-  }, [history, searchQuery, activeTab]);
+  }, [history, searchQuery, activeTab, allFilterType]);
 
   const totalPages = Math.ceil(filteredHistory.length / ITEMS_PER_PAGE);
   const paginatedHistory = filteredHistory.slice(
@@ -170,22 +192,81 @@ const Transactions: React.FC<TransactionsProps> = ({ onBack, onShopNow }) => {
       </div>
 
       {/* Filter Tabs */}
-      <div className="flex overflow-x-auto hide-scrollbar gap-2 mb-4 pb-1">
+      <div className={`flex overflow-x-auto hide-scrollbar gap-2 relative z-20 transition-all duration-300 ${isAllDropdownOpen ? 'pb-[12rem] -mb-[10.75rem]' : 'pb-1 mb-4'}`}>
         {TABS.map(tab => (
-          <button
-            key={tab}
-            onClick={() => {
-              setActiveTab(tab);
-              setCurrentPage(1);
-            }}
-            className={`whitespace-nowrap px-4 py-2 rounded-lg text-sm font-bold transition-all ${
-              activeTab === tab 
-                ? 'bg-red-600 text-white shadow-md' 
-                : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50 shadow-sm'
-            }`}
-          >
-            {tab}
-          </button>
+          tab === 'All' ? (
+            <div key={tab} className="relative" ref={dropdownRef}>
+              <button
+                onClick={() => {
+                  if (activeTab === 'All') {
+                    setIsAllDropdownOpen(!isAllDropdownOpen);
+                  } else {
+                    setActiveTab('All');
+                    setCurrentPage(1);
+                  }
+                }}
+                className={`whitespace-nowrap px-4 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-1.5 ${
+                  activeTab === 'All' 
+                    ? 'bg-red-600 text-white shadow-md' 
+                    : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50 shadow-sm'
+                }`}
+              >
+                {allFilterType === 'all' ? 'All' : allFilterType === 'wallet' ? 'Wallet' : 'Instant Pay'}
+                <ChevronDown className={`w-4 h-4 transition-transform ${isAllDropdownOpen ? 'rotate-180' : ''}`} />
+              </button>
+              
+              {isAllDropdownOpen && activeTab === 'All' && (
+                <div className="absolute top-full left-0 mt-2 w-40 bg-white rounded-xl shadow-lg border border-gray-100 py-1.5 z-20 overflow-hidden">
+                  <button
+                    onClick={() => {
+                      setAllFilterType('all');
+                      setIsAllDropdownOpen(false);
+                      setCurrentPage(1);
+                    }}
+                    className={`w-full text-left px-4 py-2.5 text-sm transition-colors ${allFilterType === 'all' ? 'bg-red-50 text-red-600 font-bold' : 'text-gray-700 hover:bg-gray-50'}`}
+                  >
+                    All Filter
+                  </button>
+                  <button
+                    onClick={() => {
+                      setAllFilterType('wallet');
+                      setIsAllDropdownOpen(false);
+                      setCurrentPage(1);
+                    }}
+                    className={`w-full text-left px-4 py-2.5 text-sm transition-colors ${allFilterType === 'wallet' ? 'bg-red-50 text-red-600 font-bold' : 'text-gray-700 hover:bg-gray-50'}`}
+                  >
+                    Wallet
+                  </button>
+                  <button
+                    onClick={() => {
+                      setAllFilterType('instant_pay');
+                      setIsAllDropdownOpen(false);
+                      setCurrentPage(1);
+                    }}
+                    className={`w-full text-left px-4 py-2.5 text-sm transition-colors ${allFilterType === 'instant_pay' ? 'bg-red-50 text-red-600 font-bold' : 'text-gray-700 hover:bg-gray-50'}`}
+                  >
+                    Instant Pay
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <button
+              key={tab}
+              onClick={() => {
+                setActiveTab(tab);
+                setCurrentPage(1);
+                setIsAllDropdownOpen(false);
+              }}
+              className={`whitespace-nowrap px-4 py-2 rounded-lg text-sm font-bold transition-all ${
+                activeTab === tab 
+                  ? 'bg-red-600 text-white shadow-md' 
+                  : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50 shadow-sm'
+              }`}
+            >
+              {tab}
+            </button>
+          )
         ))}
       </div>
 
