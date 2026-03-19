@@ -40,7 +40,7 @@ const SidebarItem: React.FC<{
         onClick();
       }
     }}
-    className="flex items-center gap-4 p-3 rounded-lg hover:bg-gray-50 group transition-colors cursor-pointer justify-between"
+    className="flex items-center gap-4 p-3 rounded-lg hover:bg-white/40 group transition-colors cursor-pointer justify-between"
   >
     <div className="flex items-center gap-4">
       <div className="w-5 h-5 text-gray-700">
@@ -95,10 +95,10 @@ const Sidebar: React.FC<SidebarProps> = ({
         initial={{ x: "100%" }}
         animate={{ x: isOpen ? 0 : "100%" }}
         transition={{ type: "spring", stiffness: 300, damping: 30 }}
-        className="fixed top-[56px] bottom-0 right-0 w-[220px] bg-white z-[10001] flex flex-col border-l border-gray-200 shadow-2xl"
+        className="fixed top-[56px] bottom-0 right-0 w-[220px] bg-white/70 backdrop-blur-xl saturate-150 z-[10001] flex flex-col border-l border-white/50 shadow-2xl"
       >
         {/* User Profile Section */}
-        <div className="p-6 border-b border-gray-100 flex items-center gap-4 bg-white">
+        <div className="p-6 border-b border-white/30 flex items-center gap-4">
           <img 
             src={avatarUrl} 
             className="w-12 h-12 rounded-full border border-gray-100 object-cover" 
@@ -173,7 +173,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         </nav>
         
         {/* Auth Action Section */}
-        <div className="p-4 border-t border-gray-100 mt-auto pb-24">
+        <div className="p-4 border-t border-white/30 mt-auto pb-24">
           {user ? (
             <button 
               onClick={onLogout}

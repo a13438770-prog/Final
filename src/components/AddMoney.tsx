@@ -60,7 +60,7 @@ const AddMoney: React.FC<AddMoneyProps> = ({ videoLink, onProceed, onViewTransac
 
   return (
     <div className="min-h-screen bg-[#f0f5f9] pb-20 pt-4">
-      <div className="container mx-auto px-2 max-w-lg">
+      <div className="container mx-auto px-2 max-w-3xl">
         
         {/* Header Card */}
         <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-200 mb-3 flex items-center justify-between">

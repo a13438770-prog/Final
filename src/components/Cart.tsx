@@ -59,12 +59,9 @@ const Cart: React.FC<CartProps> = ({ cartItems, onUpdateQuantity, onRemoveItem, 
 
   return (
     <div className="min-h-screen bg-[#f0f5f9] pb-20 pt-4">
-      <div className="container mx-auto px-2 max-w-lg">
+      <div className="container mx-auto px-2 max-w-3xl">
         {/* Header Card */}
         <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-200 mb-3 flex items-center gap-3">
-          <button onClick={onBack} className="w-10 h-10 bg-red-50 rounded-full flex items-center justify-center text-red-600 hover:bg-red-100 transition-colors border border-red-100 flex-shrink-0">
-            <ArrowLeft className="w-5 h-5" />
-          </button>
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center flex-shrink-0 border border-red-100">
               <ShoppingCart className="w-6 h-6 text-red-600" />

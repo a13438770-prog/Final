@@ -38,7 +38,7 @@ const Store: React.FC<StoreProps> = ({ games, categories, onGameClick, onBack })
 
   return (
     <div className="min-h-screen bg-[#f0f5f9] pb-20 pt-4">
-      <div className="container mx-auto px-2 max-w-lg">
+      <div className="container mx-auto px-2">
         {/* Header Card */}
         <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-200 mb-3 flex items-center gap-3">
           {onBack && (
@@ -100,7 +100,7 @@ const Store: React.FC<StoreProps> = ({ games, categories, onGameClick, onBack })
 
         {/* Games Grid */}
         {currentGames.length > 0 ? (
-          <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 sm:gap-4">
+          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 gap-2 sm:gap-4 md:gap-6">
             {currentGames.map((game) => (
               <GameCard key={game.id} game={game} onClick={() => onGameClick?.(game.id)} />
             ))}

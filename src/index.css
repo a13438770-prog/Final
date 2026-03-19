@@ -41,10 +41,11 @@ body {
 
 /* HEADER: High Transparency Glassmorphism */
 #main-header-secure {
-  background-color: rgba(255, 255, 255, 0.1) !important; 
-  backdrop-filter: blur(12px) !important; 
-  -webkit-backdrop-filter: blur(12px) !important;
-  border-bottom: 1px solid rgba(203, 213, 225, 0.4) !important;
+  background-color: rgba(255, 255, 255, 0.6) !important; 
+  backdrop-filter: blur(16px) saturate(150%) !important; 
+  -webkit-backdrop-filter: blur(16px) saturate(150%) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.5) !important;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05) !important;
   position: sticky !important;
   top: 0 !important;
   z-index: 50 !important; 
@@ -64,7 +65,6 @@ body {
 .secure-balance-box {
   background-color: var(--primary-color) !important;
   color: #ffffff !important;
-  border: 1px solid #ffffff !important;
   border-radius: 50px !important; 
   height: 28px !important; 
   padding: 0 6px !important; 
@@ -91,9 +91,9 @@ body {
   color: white;
   border: 2px solid var(--primary-color);
   padding: 4px 12px;
-  font-size: 12px;
+  font-size: 13px;
   border-radius: 6px; 
-  font-weight: 400;
+  font-weight: 900;
   font-family: var(--font-lato);
   text-transform: uppercase;
   transition: all 0.2s;
@@ -123,6 +123,18 @@ body {
   width: 100%;
   overflow: hidden;
   position: relative;
+}
+
+@media (min-width: 768px) {
+  .slider-aspect {
+    aspect-ratio: 3 / 1;
+  }
+}
+
+@media (min-width: 1024px) {
+  .slider-aspect {
+    aspect-ratio: 4 / 1;
+  }
 }
 
 /* NOTICE STYLES */
@@ -699,7 +711,7 @@ body {
   color: white;
   border: none;
   padding: 8px 20px;
-  border-radius: 50px;
+  border-radius: 6px;
   font-weight: 900;
   font-size: 14px;
   cursor: pointer;

@@ -56,7 +56,7 @@ const PaymentVerify: React.FC<PaymentVerifyProps> = ({ amount, initialMethod = '
         <h1 className="font-bold text-lg text-gray-800 ml-2">Add Money</h1>
       </div>
 
-      <div className="pt-20 px-2 pb-10 max-w-lg mx-auto">
+      <div className="pt-20 px-2 pb-10 max-w-3xl mx-auto">
         <div className="grid grid-cols-3 gap-3 mb-6">
           {(Object.keys(paymentData) as PayMethod[]).map((m) => (
             <div 

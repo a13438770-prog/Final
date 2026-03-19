@@ -352,7 +352,7 @@ export const GameCard: React.FC<{ game: Game; onClick?: (id: number) => void }> 
       onTouchMove={cancelHover}
       className="block text-left cursor-pointer focus:outline-none w-full group"
     >
-      <div className="rounded-md overflow-hidden mb-2 relative bg-white shadow-sm border border-gray-200">
+      <div className={`rounded-md overflow-hidden mb-2 relative bg-white shadow-sm border border-gray-200 transition-transform duration-300 ${isActive ? 'scale-105 shadow-md' : 'scale-100'} group-hover:scale-105 group-hover:shadow-md`}>
         <img 
           src={game.image} 
           className={`w-full aspect-square object-cover transition-transform duration-300 ${isActive ? 'scale-110' : 'scale-100'} group-hover:scale-110`} 
@@ -377,7 +377,7 @@ const GameGrid: React.FC<{ games: Game[]; onGameClick?: (id: number) => void }> 
   if (games.length === 0) return null;
 
   return (
-    <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 mt-6">
+    <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7 gap-4 md:gap-6 mt-6">
       {games.map((game) => (
         <GameCard key={game.id} game={game} onClick={onGameClick} />
       ))}
@@ -390,7 +390,7 @@ const GameGrid: React.FC<{ games: Game[]; onGameClick?: (id: number) => void }> 
  */
 const LatestOrders: React.FC<{ orders: Order[] }> = ({ orders }) => {
   return (
-    <div className="container mx-auto px-2 pb-24">
+    <div className="container mx-auto px-2 pb-24 max-w-3xl" onContextMenu={(e) => e.preventDefault()}>
       <div className="latest-orders-container">
         <h2 className="latest-orders-title">Latest Orders</h2>
         <p className="latest-orders-subtitle">সবচেয়ে সাম্প্রতিক <span>5টি অর্ডার</span> এক নজরে</p>
@@ -471,7 +471,7 @@ const Home: React.FC<HomeProps> = (props) => {
       {noticeText && <Notice text={noticeText} onDismiss={() => setNoticeDismissed(true)} />}
 
       {/* Slider */}
-      <div className={noticeDismissed || !noticeText ? "mt-4" : ""}>
+      <div className={`container mx-auto ${noticeDismissed || !noticeText ? "mt-4" : ""}`}>
         <Slider slides={slides} />
       </div>
 

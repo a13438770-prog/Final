@@ -208,27 +208,65 @@ const GameDetail: React.FC<GameDetailProps> = ({
 
   return (
     <div className="min-h-screen bg-[#f0f5f9] pb-20 pt-4">
-      <div className="container mx-auto px-2 max-w-lg">
-        {/* Product Info Card */}
-        <div className="bg-white p-3 rounded-xl shadow-sm border border-gray-200 mb-3 flex items-center gap-3 relative overflow-hidden">
-          <div className="absolute inset-0 bg-[url('https://ais-dev-kft2mugwq7fnkyubdpfn7o-342179268189.asia-southeast1.run.app/res/backgrounds/bg.png')] opacity-15 bg-cover bg-center"></div>
-          <div className="w-16 h-16 rounded-lg overflow-hidden shadow-sm bg-gray-100 flex-shrink-0 relative z-10">
-            <img src={game.image} className="w-full h-full object-cover" alt={game.name} referrerPolicy="no-referrer" />
-          </div>
-          <div className="relative z-10">
-            <h1 className="text-gray-900 font-bree text-xl md:text-2xl mb-1 leading-tight">{game.name}</h1>
-            <div className="flex flex-wrap gap-1.5">
-              <span className="bg-red-50 text-red-600 border border-red-100 text-[10px] font-bold px-1.5 py-0.5 rounded-sm uppercase tracking-wider">
-                {game.type === 'uid' ? 'UID Topup' : game.type === 'voucher' ? 'Voucher' : 'Subscription'}
-              </span>
-              <span className="bg-green-50 text-green-600 border border-green-100 text-[10px] font-bold px-1.5 py-0.5 rounded-sm uppercase tracking-wider">
-                <i className="fa-solid fa-bolt mr-1"></i> Instant
-              </span>
+      <div className="container mx-auto px-2 max-w-5xl">
+        <div className="flex flex-col lg:flex-row gap-4 lg:gap-6">
+          {/* Left Column */}
+          <div className="w-full lg:w-1/3 flex flex-col gap-3">
+            {/* Product Info Card */}
+            <div className="bg-white p-3 rounded-xl shadow-sm border border-gray-200 flex items-center gap-3 relative overflow-hidden">
+              <div className="absolute inset-0 bg-[url('https://ais-dev-kft2mugwq7fnkyubdpfn7o-342179268189.asia-southeast1.run.app/res/backgrounds/bg.png')] opacity-15 bg-cover bg-center"></div>
+              <div className="w-16 h-16 rounded-lg overflow-hidden shadow-sm bg-gray-100 flex-shrink-0 relative z-10">
+                <img src={game.image} className="w-full h-full object-cover" alt={game.name} referrerPolicy="no-referrer" />
+              </div>
+              <div className="relative z-10">
+                <h1 className="text-gray-900 font-bree text-xl md:text-2xl mb-1 leading-tight">{game.name}</h1>
+                <div className="flex flex-wrap gap-1.5">
+                  <span className="bg-red-50 text-red-600 border border-red-100 text-[10px] font-bold px-1.5 py-0.5 rounded-sm uppercase tracking-wider">
+                    {game.type === 'uid' ? 'UID Topup' : game.type === 'voucher' ? 'Voucher' : 'Subscription'}
+                  </span>
+                  <span className="bg-green-50 text-green-600 border border-green-100 text-[10px] font-bold px-1.5 py-0.5 rounded-sm uppercase tracking-wider">
+                    <i className="fa-solid fa-bolt mr-1"></i> Instant
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Rules & Conditions (Desktop) */}
+            <div className="hidden lg:block bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+              <div className="flex border-b border-gray-200 bg-gray-50">
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('description')}
+                  className={`flex-1 py-2.5 text-xs font-bold uppercase tracking-wider transition-colors ${activeTab === 'description' ? 'text-[#dc2626] border-b-2 border-[#dc2626] bg-white' : 'text-gray-500 hover:text-gray-700'}`}
+                >
+                  Description
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('guide')}
+                  className={`flex-1 py-2.5 text-xs font-bold uppercase tracking-wider transition-colors ${activeTab === 'guide' ? 'text-[#dc2626] border-b-2 border-[#dc2626] bg-white' : 'text-gray-500 hover:text-gray-700'}`}
+                >
+                  Buying Guide
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('rules')}
+                  className={`flex-1 py-2.5 text-xs font-bold uppercase tracking-wider transition-colors ${activeTab === 'rules' ? 'text-[#dc2626] border-b-2 border-[#dc2626] bg-white' : 'text-gray-500 hover:text-gray-700'}`}
+                >
+                  Rules
+                </button>
+              </div>
+              <div className="p-3 text-xs text-gray-700 leading-relaxed space-y-2 notice-content whitespace-pre-wrap break-words min-h-[100px]">
+                {activeTab === 'description' && (game.description || "No description available.")}
+                {activeTab === 'guide' && "1. Select your desired package.\n2. Enter your correct Player ID.\n3. Choose your payment method.\n4. Click Buy Now to complete the purchase."}
+                {activeTab === 'rules' && "1. Double check your Player ID before purchasing.\n2. Purchases are final and non-refundable.\n3. Delivery is usually instant but may take up to 10 minutes."}
+              </div>
             </div>
           </div>
-        </div>
 
-        <form onSubmit={handleSubmit}>
+          {/* Right Column */}
+          <div className="w-full lg:w-2/3">
+            <form onSubmit={handleSubmit}>
         {/* Step 1: Select Package */}
         <div className="bg-white p-3 rounded-xl shadow-sm border border-gray-200 mb-3">
           <div className="flex items-center justify-between border-b pb-2 mb-3">
@@ -468,8 +506,8 @@ const GameDetail: React.FC<GameDetailProps> = ({
           </div>
         </div>
 
-        {/* Rules & Conditions */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 mb-6 overflow-hidden">
+        {/* Rules & Conditions (Mobile) */}
+        <div className="lg:hidden bg-white rounded-xl shadow-sm border border-gray-200 mb-6 overflow-hidden">
           <div className="flex border-b border-gray-200 bg-gray-50">
             <button
               type="button"
@@ -500,6 +538,8 @@ const GameDetail: React.FC<GameDetailProps> = ({
           </div>
         </div>
       </form>
+          </div>
+        </div>
       </div>
 
       {/* Confirmation Popup */}

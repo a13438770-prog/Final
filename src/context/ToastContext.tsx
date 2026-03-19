@@ -38,34 +38,38 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   };
 
   const icons = {
-    success: <CheckCircle className="w-5 h-5 text-green-500" />,
-    error: <AlertCircle className="w-5 h-5 text-red-500" />,
-    info: <Info className="w-5 h-5 text-blue-500" />
+    success: <CheckCircle className="w-4 h-4 text-green-500" />,
+    error: <AlertCircle className="w-4 h-4 text-red-500" />,
+    info: <Info className="w-4 h-4 text-blue-500" />
   };
 
   const bgColors = {
-    success: 'bg-white border-l-4 border-green-500',
-    error: 'bg-white border-l-4 border-red-500',
-    info: 'bg-white border-l-4 border-blue-500'
+    success: 'bg-white/80 backdrop-blur-xl saturate-150 border border-green-200/50 text-green-800',
+    error: 'bg-white/80 backdrop-blur-xl saturate-150 border border-red-200/50 text-red-800',
+    info: 'bg-white/80 backdrop-blur-xl saturate-150 border border-blue-200/50 text-blue-800'
   };
 
   return (
     <ToastContext.Provider value={{ showToast }}>
       {children}
-      <div className="fixed top-4 right-4 z-[10005] flex flex-col gap-2 pointer-events-none">
-        <AnimatePresence>
+      <div className="fixed top-[72px] right-4 z-[10005] flex flex-col items-end gap-2 pointer-events-none">
+        <AnimatePresence mode="popLayout">
           {toasts.map(toast => (
             <motion.div
+              layout
               key={toast.id}
-              initial={{ opacity: 0, x: 100 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 100 }}
-              className={`flex items-center gap-3 p-4 shadow-lg rounded-md min-w-[250px] max-w-[350px] pointer-events-auto ${bgColors[toast.type]}`}
+              initial={{ opacity: 0, x: 50, scale: 0.9 }}
+              animate={{ opacity: 1, x: 0, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9, filter: "blur(4px)", x: 20 }}
+              transition={{ type: "spring", stiffness: 500, damping: 30 }}
+              className={`flex items-center gap-2 px-3.5 py-2 shadow-[0_4px_12px_rgba(0,0,0,0.05)] rounded-md w-max max-w-[90vw] pointer-events-auto ${bgColors[toast.type]}`}
             >
-              {icons[toast.type]}
-              <p className="text-sm font-medium text-gray-800 flex-1">{toast.message}</p>
-              <button onClick={() => removeToast(toast.id)} className="text-gray-400 hover:text-gray-600 transition-colors">
-                <X className="w-4 h-4" />
+              <div className="flex-shrink-0">
+                {icons[toast.type]}
+              </div>
+              <p className="text-xs font-semibold flex-1 tracking-wide">{toast.message}</p>
+              <button onClick={() => removeToast(toast.id)} className="text-gray-400 hover:text-gray-600 transition-colors ml-1 outline-none">
+                <X className="w-3.5 h-3.5" />
               </button>
             </motion.div>
           ))}
